@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>4급 어휘 예습</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F7F4; --surface:#FFFFFF; --ink:#1E2748; --muted:#5B6275;
+  --line:#D9DCE3; --grid:#C9503F; --grid-soft:rgba(201,80,63,.10);
+  --ok:#2F7A55; --ok-soft:rgba(47,122,85,.10); --sel:#E9ECF6;
+  --g:#2F7A55; --y:#B7860B; --r:#C9503F;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141728; --surface:#1C2036; --ink:#EEF0F7; --muted:#A3A9BD;
+    --line:#2E3352; --grid:#E27A6B; --grid-soft:rgba(226,122,107,.14);
+    --ok:#62C08F; --ok-soft:rgba(98,192,143,.14); --sel:#262B47;
+    --g:#62C08F; --y:#E0B84A; --r:#E27A6B;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141728; --surface:#1C2036; --ink:#EEF0F7; --muted:#A3A9BD;
+  --line:#2E3352; --grid:#E27A6B; --grid-soft:rgba(226,122,107,.14);
+  --ok:#62C08F; --ok-soft:rgba(98,192,143,.14); --sel:#262B47;
+  --g:#62C08F; --y:#E0B84A; --r:#E27A6B;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;min-height:100%}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  font-size:17px;line-height:1.55;-webkit-text-size-adjust:100%;
+}
+#app{max-width:480px;margin:0 auto;padding:22px 20px 48px}
+h1,h2,h3{font-weight:600;margin:0}
+h2{font-size:1.35rem}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+p{margin:.4rem 0}
+
+.cells{display:flex;padding-left:2px}
+.cell{width:2.4em;height:2.4em;margin-left:-2px;border:2px solid var(--grid);display:grid;place-items:center;
+  background:var(--surface);font-family:"Gowun Batang",serif;font-weight:700;font-size:2rem}
+
+/* 머리 */
+.head{margin-bottom:22px}
+.head .label{display:flex;justify-content:space-between;gap:12px;font-size:.92rem;color:var(--muted)}
+.head .label b{color:var(--ink);font-weight:600}
+.bar{height:10px;border:2px solid var(--grid);margin-top:8px}
+.bar i{display:block;height:100%;background:var(--grid)}
+
+/* 입력, 버튼 */
+label.f{display:block;font-weight:600;margin:24px 0 8px}
+input[type=text],select{
+  width:100%;font:inherit;font-size:1.1rem;padding:14px 16px;
+  border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);
+}
+input[type=text]:focus,select:focus{outline:none;border-color:var(--ink)}
+.btn{
+  display:block;width:100%;font:inherit;font-weight:600;font-size:1.05rem;padding:16px;
+  border-radius:10px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;margin-top:14px;
+}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.row{display:flex;gap:10px}.row .btn{margin-top:0}.row .btn.back{flex:0 0 32%}
+.link{font:inherit;font-size:.88rem;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:6px 0}
+:is(.btn,.opt,.self,.say,.chip,.blank,.link,.day):focus-visible{outline:3px solid var(--grid);outline-offset:2px}
+.hint{color:var(--muted);font-size:.88rem;margin:10px 0 0;min-height:1.3em}
+.err{color:var(--grid);font-size:.9rem;min-height:1.3em;margin:6px 0 0}
+
+/* 시작 */
+.days{display:grid;gap:12px;margin-top:4px}
+.dayrow{border:2px solid var(--line);border-radius:10px;background:var(--surface);padding:4px 4px 8px}
+.day{width:100%;font:inherit;text-align:left;background:none;border:0;color:var(--ink);cursor:pointer;
+  padding:12px 14px 4px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.day b{font-size:1.15rem}.day small{display:block;color:var(--muted);font-size:.9rem}
+.day .st{font-size:.88rem;color:var(--muted);white-space:nowrap}.day .st.done{color:var(--ok);font-weight:600}
+.dayrow .link{margin-left:14px}
+
+/* 1단계 */
+.word{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:6px 0 4px}
+.word strong{font-family:"Gowun Batang",serif;font-size:2.4rem;line-height:1.25}
+.say{font:inherit;font-size:.88rem;cursor:pointer;border:1.5px solid var(--line);border-radius:999px;
+  background:var(--surface);color:var(--ink);padding:5px 12px}
+.say[hidden]{display:none}
+.desc{margin-top:16px;padding:14px 16px;border-left:4px solid var(--grid);background:var(--surface);border-radius:0 10px 10px 0}
+.desc .t{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:.88rem}
+.desc p{font-size:1.12rem;margin:6px 0 0}
+.selfs{display:grid;gap:8px}
+.self{font:inherit;text-align:left;padding:13px 16px;border:2px solid var(--line);border-radius:10px;
+  background:var(--surface);color:var(--ink);cursor:pointer;font-size:1rem}
+.self[aria-pressed="true"]{border-color:var(--ink);background:var(--sel);font-weight:600}
+
+/* 통계 */
+.stats{margin:18px 0 0;border-top:2px solid var(--line)}
+.stats div{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line)}
+.stats div b{font-weight:600}
+.big{font-family:"Gowun Batang",serif;font-size:3rem;font-weight:700;line-height:1.1;margin:14px 0 4px}
+.words{margin:10px 0 0;padding:12px 14px;background:var(--surface);border-radius:10px;border:1px solid var(--line)}
+
+/* 2단계 */
+.prompt{font-size:1.3rem;font-weight:600;line-height:1.55;margin:4px 0 20px}
+.opts{display:grid;gap:10px}
+.opt{font:inherit;font-size:1.2rem;text-align:left;padding:16px 18px;border:2px solid var(--line);border-radius:10px;
+  background:var(--surface);color:var(--ink);cursor:pointer}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--ok);background:var(--ok-soft);font-weight:600}
+.opt.wrong{border-color:var(--grid);background:var(--grid-soft)}
+.fb{margin:14px 0 0;font-weight:600;min-height:1.5em}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--grid)}
+.memo{color:var(--muted);font-weight:400;font-size:.92rem;margin-top:4px}
+
+/* 3단계 */
+.bank{position:sticky;top:env(safe-area-inset-top,0px);z-index:2;background:var(--paper);padding:10px 0 12px;
+  display:flex;flex-wrap:wrap;gap:8px;border-bottom:2px solid var(--line)}
+.chip{font:inherit;font-size:1.02rem;padding:9px 14px;border-radius:999px;border:2px solid var(--ink);
+  background:var(--surface);color:var(--ink);cursor:pointer}
+.chip.used{opacity:.6;border-style:dashed}
+.chip.used::before{content:"✓ ";font-size:.85em}
+.chip.unused{border-color:var(--grid);color:var(--grid)}
+.sents{list-style:none;margin:16px 0 0;padding:0}
+.sents li{padding:14px 0;border-bottom:1px solid var(--line);font-size:1.08rem;line-height:2}
+.sents li .n{color:var(--grid);font-weight:600;margin-right:6px}
+.blank{font:inherit;min-width:5.5em;padding:2px 10px;border:0;border-bottom:3px solid var(--line);
+  background:var(--grid-soft);color:var(--ink);cursor:pointer;border-radius:6px 6px 0 0;font-weight:600}
+.blank.active{border-bottom-color:var(--grid);background:var(--sel)}
+.blank.ok{border:2px solid var(--ok);border-radius:6px;background:var(--ok-soft)}
+.blank.no{border:2px solid var(--grid);border-radius:6px;background-color:var(--grid-soft);
+  background-image:linear-gradient(to top right,transparent calc(50% - 1.5px),var(--grid) calc(50% - 1.5px),var(--grid) calc(50% + 1.5px),transparent calc(50% + 1.5px))}
+.chip,.blank{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.chip.dragging,.blank.dragging{opacity:.35}
+.blank.over{outline:3px dashed var(--grid);outline-offset:2px}
+.bank.over{background:var(--grid-soft)}
+.ghost{position:fixed;left:0;top:0;pointer-events:none;z-index:50;padding:9px 16px;border-radius:999px;
+  background:var(--ink);color:var(--paper);font-weight:600;font-size:1.05rem;box-shadow:0 6px 18px rgba(0,0,0,.25);
+  transform:translate(-50%,-130%)}
+.sents li .n{display:inline-grid;place-items:center;min-width:1.9em;height:1.9em;position:relative;margin-right:4px}
+.sents li.ok .n{border:2.5px solid var(--grid);border-radius:50%}
+.sents li.no .n::after{content:"";position:absolute;left:-6px;right:-6px;top:50%;height:3px;background:var(--grid);transform:rotate(-58deg);border-radius:2px}
+.sents li .gram{color:var(--muted);font-size:.9em}
+.mark{display:block;font-size:.95rem;line-height:1.5;font-weight:600;margin-top:6px}
+.mark .pair{display:block;font-weight:400;color:var(--ink)}
+.mark .pair b{font-weight:600}
+.journey{list-style:none;margin:10px 0 0;padding:0;border-top:2px solid var(--line)}
+.journey li{padding:10px 0;border-bottom:1px solid var(--line)}
+.journey b{font-size:1.08rem}
+.journey span{display:block;color:var(--muted);font-size:.88rem}
+.kind{margin:22px 0 0;font-weight:600}
+.mark.ok{color:var(--ok)}.mark.no{color:var(--grid)}
+
+.cyc{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.85rem;color:var(--muted);margin-bottom:14px}
+.cells5{display:inline-flex;padding-left:2px}
+.cells5 i{width:22px;height:12px;border:2px solid var(--grid);margin-left:-2px}
+.cells5 i.done{background:var(--grid)}.cells5 i.now{background:var(--grid-soft)}
+.total{margin-top:22px}.total .label{display:flex;justify-content:space-between;color:var(--muted);font-size:.95rem}.total .label b{color:var(--ink)}
+.allok{margin:16px 0 0;padding:14px 16px;border-radius:10px;background:var(--ok-soft);color:var(--ok);font-weight:600}
+.dayrow .dayacts{display:flex;gap:14px;padding-left:14px}.dayrow .dayacts .link{margin-left:0}
+.link.strong{color:var(--ink);font-weight:600}
+.vctrl{position:sticky;top:env(safe-area-inset-top,0px);z-index:2;background:var(--paper);padding:8px 0 10px;border-bottom:2px solid var(--line);margin-top:14px}
+.vcap{font-size:.82rem;color:var(--muted);margin:6px 0 6px}
+.vfilters,.vhides{display:flex;flex-wrap:wrap;gap:6px}
+.vchip{font:inherit;font-size:.9rem;padding:7px 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.vchip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--paper);font-weight:600}
+.vchip.hide[aria-pressed="true"]{background:var(--grid);border-color:var(--grid);color:#fff}
+.vlist{list-style:none;margin:10px 0 0;padding:0}
+.vlist>li{padding:14px 0;border-bottom:1px solid var(--line)}
+.vtop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
+.vno{color:var(--grid);font-weight:600;font-size:.85rem}
+.vtags{display:flex;gap:6px;flex-wrap:wrap}
+.vtag{font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:999px;border:1.5px solid}
+.vtag.red{color:var(--r);border-color:var(--r)}.vtag.yellow{color:var(--y);border-color:var(--y)}.vtag.new{color:var(--muted);border-color:var(--line)}
+.vrow{display:flex;align-items:center;gap:8px;margin-top:6px}
+.vrow>button:first-child,.vrow .vlabel+button{flex:1}
+.vword,.vdesc,.vnative{font:inherit;text-align:left;background:none;border:0;padding:4px 0;color:var(--ink);cursor:default;min-height:2em}
+.vword{font-family:"Gowun Batang",serif;font-weight:700;font-size:1.45rem}
+.vdesc{font-size:1rem}
+.vnative{font-size:1rem;color:var(--muted)}
+.vword.open,.vdesc.open,.vnative.open{cursor:pointer;border-bottom:1.5px dashed var(--line)}
+.vlabel{font-size:.78rem;color:var(--muted);white-space:nowrap;border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+.cover{cursor:pointer !important;color:var(--muted) !important;font-family:inherit !important;font-weight:400 !important;font-size:.9rem !important;
+  border-radius:8px !important;padding:8px 12px !important;background:repeating-linear-gradient(-45deg,var(--grid-soft) 0 8px,transparent 8px 16px),var(--surface) !important;border:1.5px dashed var(--grid) !important}
+.vempty{color:var(--muted);text-align:center;padding:28px 0 !important}
+.vrow .say{padding:4px 10px}
+.sync{margin:16px 0 4px;padding:14px 16px;border-radius:10px;border:2px solid var(--line);background:var(--surface)}
+.sync b{display:block;font-size:1.02rem}.sync span{display:block;color:var(--muted);font-size:.88rem;margin-top:4px}
+.sync.ok{border-color:var(--ok);background:var(--ok-soft)}.sync.ok b{color:var(--ok)}
+.sync.fail{border-color:var(--grid);background:var(--grid-soft)}.sync.fail b{color:var(--grid)}
+pre.out{white-space:pre-wrap;word-break:break-word;font:inherit;font-size:.92rem;background:var(--surface);
+  border:1px dashed var(--line);border-radius:10px;padding:14px;margin:14px 0 0;user-select:text;-webkit-user-select:text}
+.copied{color:var(--ok);font-weight:600;margin:10px 0 0;min-height:1.4em}.copied.fail{color:var(--grid)}
+@media (prefers-reduced-motion:no-preference){.opt,.self,.chip,.blank{transition:background .12s,border-color .12s}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+
+<script>
+/* =================================================================
+   ✏️ 구글 시트 연결
+   Apps Script를 '웹 앱'으로 배포한 뒤 받은 주소를 따옴표 안에 붙여넣으세요.
+   비워 두면 시트로 보내지 않고, 휴대폰 저장 + 결과 복사만 작동해요.
+   ================================================================= */
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbzxBY69jTxPYHJR32iAoBHCIO2LRLFTD9vl-dhe9fuKA1-6SQLD7fWPKbE9J5eX_WTU4Q/exec";
+const APP_VERSION = "2026-09-29 s4";
+
+/* =================================================================
+   ✏️ 과 데이터 — 새 과를 추가할 때는 LESSONS 에 하나를 더 넣으면 됩니다.
+   words     : 번호|어휘|쉬운 한국어 뜻
+   sentences : 번호|3단계 문장|오답 재학습용 새 문장   (___ = 빈칸)
+   groups    : 2단계에서 서로 헷갈리는 보기로 쓸 어휘 묶음 (쉼표로 구분)
+   conflicts : 같은 3단계 보기에 함께 넣으면 정답이 둘이 될 수 있는 짝
+   ================================================================= */
+const LESSONS = [{
+  code: "L1",
+  title: "1과 적성과 진로",
+  days: [{ day: 1, from: 1, to: 50 }, { day: 2, from: 51, to: 100 }],
+  words: `
+1|능력|어떤 일을 할 수 있는 힘
+2|적성|어떤 일이 자기 성격이나 능력에 잘 맞는 것
+3|소질|태어날 때부터 가지고 있어서 어떤 일을 잘할 가능성이 있는 능력
+4|진로|앞으로 공부하거나 일할 방향
+5|전공|대학에서 중심으로 공부하는 분야
+6|분야|일이나 공부를 나눈 종류
+7|장점|다른 사람보다 잘하거나 좋은 점
+8|손재주|손으로 만들거나 고치는 일을 잘하는 능력
+9|손재주가 좋다|손으로 만들거나 고치는 일을 잘하다
+10|설득력|다른 사람이 내 말을 믿고 받아들이게 하는 힘
+11|설득력이 있다|다른 사람이 내 말을 잘 받아들이게 할 수 있다
+12|책임감|맡은 일을 끝까지 하려는 마음
+13|책임감이 강하다|맡은 일을 끝까지 잘하려고 하다
+14|이해가 빠르다|새로운 내용을 빨리 알아듣다
+15|소질이 있다|어떤 일을 잘할 수 있는 타고난 능력이 있다
+16|적성에 맞다|일이 자기 성격이나 능력과 잘 맞다
+17|진로를 정하다|앞으로 공부하거나 일할 방향을 정하다
+18|전공을 살리다|대학에서 공부한 것을 일할 때 사용하다
+19|예술적|음악이나 미술 같은 예술의 느낌이 있는
+20|실용적|실제 생활에서 사용하기에 좋은
+21|사교적|사람들과 쉽게 친해지고 잘 어울리는
+22|적극적|스스로 먼저 나서서 행동하는
+23|긍정적|좋은 쪽으로 생각하는
+24|활발하다|행동을 많이 하고 밝고 적극적이다
+25|성실하다|해야 할 일을 꾸준히 열심히 하다
+26|꼼꼼하다|작은 부분까지 자세히 살피다
+27|음감|음악의 소리나 높낮이를 잘 느끼는 능력
+28|음감이 뛰어나다|음악의 소리나 높낮이를 아주 잘 알다
+29|패션 감각|옷을 잘 선택하고 어울리게 입는 능력
+30|리더십|다른 사람들을 잘 이끌어 가는 능력
+31|관심|어떤 것을 알고 싶거나 하고 싶은 마음
+32|관심이 있다|어떤 것을 알고 싶거나 해 보고 싶은 마음이 있다
+33|고민|어떻게 해야 할지 몰라서 걱정하는 것
+34|상담|고민이나 문제를 해결하기 위해 이야기하는 것
+35|조언|어떻게 하는 것이 좋은지 알려 주는 말
+36|조언을 구하다|다른 사람에게 어떻게 하면 좋은지 물어보다
+37|조언을 하다|다른 사람에게 어떻게 하면 좋은지 말해 주다
+38|선택하다|여러 가지 중에서 하나를 고르다
+39|해결하다|문제를 잘 처리해서 끝내다
+40|적응하다|새로운 곳이나 생활에 익숙해지다
+41|집중하다|한 가지 일에 생각과 마음을 모으다
+42|해내다|어렵지만 끝까지 해서 성공하다
+43|이루다|원하거나 바라던 것을 실제로 만들다
+44|꿈을 이루다|자기가 원했던 일을 실제로 하게 되다
+45|설득하다|상대방이 내 생각을 받아들이도록 이야기하다
+46|반대하다|다른 사람의 생각이나 행동에 동의하지 않다
+47|칭찬하다|잘하거나 좋은 점을 좋게 말하다
+48|추천하다|어떤 것이 좋다고 소개하다
+49|취직하다|회사나 직장을 구해서 일을 시작하다
+50|취업|직장을 구해서 일을 하게 되는 것
+51|진학하다|더 높은 학교에 들어가 공부하다
+52|졸업을 앞두다|곧 학교를 졸업하게 되다
+53|합격하다|시험이나 심사를 통과하다
+54|떨어지다|시험이나 심사에 합격하지 못하다
+55|뽑히다|여러 사람 중에서 선택되다
+56|근무하다|회사나 기관에서 일하다
+57|업무|회사나 직장에서 해야 하는 일
+58|학점|대학에서 받은 과목의 성적
+59|강의|대학 등에서 선생님이 내용을 가르치는 수업
+60|입학 원서|학교에 들어가기 위해 내는 서류
+61|동아리 활동|같은 관심이 있는 사람들과 모여서 하는 활동
+62|인턴사원|회사에서 일정 기간 일을 배우며 일하는 사람
+63|전문가|어떤 분야를 아주 잘 알고 경험이 많은 사람
+64|관련되다|어떤 것과 관계가 있다
+65|기획하다|어떤 일을 하기 전에 내용과 방법을 계획하다
+66|여행 상품|여행 장소와 일정 등을 정해서 만든 상품
+67|서비스업|손님에게 필요한 서비스를 제공하는 일
+68|항공사|비행기를 운행하는 회사
+69|승무원|비행기 등에서 손님을 돕는 직원
+70|승객|버스, 기차, 비행기 등을 타는 사람
+71|여행객|여행을 하는 사람
+72|보람|어떤 일을 한 후 '이 일을 하길 잘했다'고 느끼는 마음
+73|보람을 느끼다|한 일이 가치 있고 잘했다고 느끼다
+74|기회|어떤 일을 할 수 있는 좋은 때나 상황
+75|경험|직접 해 보거나 겪은 일
+76|성공하다|원하는 목표를 이루다
+77|노력하다|잘하기 위해 계속 힘을 쓰다
+78|익숙해지다|여러 번 해서 편하고 자연스러워지다
+79|맡다|어떤 일을 책임지고 하다
+80|그만두다|하던 일이나 활동을 더 이상 하지 않다
+81|늘리다|수나 양을 더 많게 하다
+82|줄이다|수나 양을 더 적게 하다
+83|부족하다|필요한 만큼 충분하지 않다
+84|다양하다|여러 가지 종류가 있다
+85|특징|다른 것과 구별되는 특별한 점
+86|차이점|서로 다른 점
+87|스스로|다른 사람의 도움 없이 자기 힘으로
+88|결국|여러 일이 있은 후 마지막에는
+89|더구나|앞의 내용에 다른 내용을 더해서 강조할 때 쓰는 말
+90|나도 모르게|내가 생각하거나 계획하지 않았는데 자연스럽게
+91|잘 어울리다|사람이나 일 등이 서로 잘 맞다
+92|마음이 맞다|서로 생각이나 성격이 잘 맞다
+93|용기|무섭거나 어려워도 해 보려는 마음
+94|고백하다|다른 사람에게 숨겼던 마음을 말하다
+95|거절당하다|부탁이나 생각을 상대방이 받아 주지 않다
+96|두렵다|무섭거나 걱정되는 마음이 있다
+97|게시판|여러 사람이 글을 쓰고 읽을 수 있는 곳
+98|대학 생활|대학에 다니면서 하는 공부와 여러 활동
+99|직업을 선택하다|앞으로 할 일을 여러 직업 중에서 고르다
+100|적성에 맞는 직업|자기 성격이나 능력에 잘 맞는 일
+`,
+  sentences: `
+1|이 일을 하려면 외국어 ___이/가 필요해요.|그 사람은 어려운 문제를 해결하는 ___이/가 뛰어나요.
+2|사람을 가르치는 일이 제 ___에 잘 맞아요.|___ 검사를 해 보니 저는 요리사가 잘 맞는대요.
+3|피아노를 처음 배웠는데 잘 치는 걸 보니 음악에 ___이/가 있는 것 같아요.|민수는 그림을 배운 적이 없는데 아주 잘 그려요. 미술에 타고난 ___이/가 있어요.
+4|저는 아직 졸업 후의 ___을/를 정하지 못했어요.|대학원에 갈지 취직할지 ___ 때문에 고민이에요.
+5|제 ___은/는 한국어교육이에요.|대학에서 경영학을 ___(으)로 공부했어요.
+6|저는 컴퓨터 ___에서 일하고 싶어요.|그는 의학 ___에서 유명한 의사예요.
+7|제 ___은/는 누구와도 금방 친해지는 거예요.|이 휴대폰의 ___은/는 배터리가 오래 간다는 거예요.
+8|할아버지의 ___(으)로 만든 나무 의자예요.|그 친구는 손으로 하는 일은 다 잘해요. ___이/가 정말 뛰어나요.
+9|언니는 ___-아/어서 액세서리를 직접 만들어요.|고장 난 자전거를 금방 고치다니 정말 ___-네요.
+10|예가 많아서 이 글은 ___이/가 높아요.|그의 말은 ___이/가 부족해서 아무도 믿지 않았어요.
+11|민수 씨의 발표는 ___-아/어서 모두 찬성했어요.|근거가 확실한 글이 더 ___-아요/어요.
+12|반장은 맡은 일을 끝까지 하는 ___이/가 필요한 자리예요.|맡은 일을 중간에 그만두는 것은 ___이/가 없는 행동이에요.
+13|그는 ___-아/어서 맡은 일을 꼭 끝까지 해요.|우리 팀장님은 ___-아/어서 한 번 맡은 일은 절대 포기하지 않아요.
+14|수진 씨는 ___-아/어서 한 번만 설명해도 알아요.|새로운 내용도 금방 알아듣는 걸 보니 ___-네요.
+15|선생님이 저에게 노래에 ___-다고 하셨어요.|제 동생은 배운 적이 없는데도 그림에 ___-아/어서 대회에서 상을 받았어요.
+16|이 일은 제 ___-아/어서 재미있어요.|성격이 꼼꼼한 사람에게는 회계 일이 ___-아요/어요.
+17|졸업 후에 대학원에 갈지 취직할지 ___-아/어야 해요.|고등학교 2학년 때 ___-았/었어요. 요리사가 될 거예요.
+18|경영학을 공부했으니까 ___-아/어서 회사에 들어가고 싶어요.|그는 대학에서 배운 것과 전혀 다른 일을 해서 ___-지 못했어요.
+19|이 건물은 디자인이 아주 ___이에요.|그 사람은 ___ 감각이 뛰어나서 그림을 잘 그려요.
+20|이 가방은 예쁘지는 않지만 물건이 많이 들어가서 ___이에요.|선물은 비싼 것보다 매일 쓸 수 있는 ___인 것이 좋아요.
+21|___인 성격이라서 처음 만난 사람과도 금방 친해져요.|그는 모임에 가면 모든 사람과 이야기하는 ___인 사람이에요.
+22|수업 시간에 ___(으)로 질문하세요.|그는 모든 일에 먼저 나서는 ___인 학생이에요.
+23|힘든 일이 있어도 ___(으)로 생각하려고 해요.|시험에 떨어졌지만 '다음에는 잘될 거야'라고 ___(으)로 생각했어요.
+24|제 동생은 ___-아/어서 잠시도 가만히 있지 않아요.|반 친구들이 모두 ___-아/어서 교실이 항상 시끄러워요.
+25|그 학생은 ___-아/어서 숙제를 한 번도 빠뜨리지 않았어요.|그는 10년 동안 한 번도 지각하지 않은 ___-(으)ㄴ 직원이에요.
+26|그는 ___-아/어서 작은 실수도 하지 않아요.|서류를 낼 때는 틀린 곳이 없는지 ___-게 확인하세요.
+27|음악가에게는 좋은 ___이/가 필요해요.|그 가수는 ___이/가 좋아서 음을 틀리지 않아요.
+28|그 아이는 ___-아/어서 한 번 들은 노래를 바로 피아노로 쳐요.|높은 음과 낮은 음을 정확하게 구별하는 걸 보니 ___-네요.
+29|친구는 ___이/가 좋아서 옷을 멋있게 입어요.|옷 색깔을 잘 맞춰 입는 걸 보니 ___이/가 있으시네요.
+30|팀장에게는 사람들을 잘 이끄는 ___이/가 중요해요.|그는 ___이/가 있어서 반장으로 뽑혔어요.
+31|요즘 한국 역사에 ___이/가 생겼어요.|그 영화는 사람들의 ___을/를 많이 받았어요.
+32|저는 요리에 ___-아/어서 요리 학원에 다녀요.|환경 문제에 ___-는 학생들이 모임을 만들었어요.
+33|요즘 진로 때문에 ___이/가 많아요.|친구에게 제 ___을/를 이야기했더니 마음이 편해졌어요.
+34|학교 선생님과 진로 ___을/를 했어요.|문제가 있으면 학생 ___ 센터에 가 보세요.
+35|선배의 ___ 덕분에 좋은 결정을 할 수 있었어요.|부모님은 저에게 항상 좋은 ___을/를 해 주세요.
+36|취업 준비에 대해 선배에게 ___-았/었어요.|어떻게 해야 할지 몰라서 선생님께 ___-(으)려고 해요.
+37|선생님이 저에게 전공 선택에 대해 ___-아/어 주셨어요.|후배가 고민을 이야기하면 저는 제 경험을 바탕으로 ___-아/어 줘요.
+38|두 회사 중에서 한 곳을 ___-아/어야 해요.|메뉴가 너무 많아서 무엇을 먹을지 ___-기 어려워요.
+39|친구와 이야기해서 문제를 ___-았/었어요.|이 문제는 혼자서 ___-기 어려워요.
+40|처음에는 힘들었지만 이제 한국 생활에 ___-았/었어요.|새 학교에 ___-는 데 시간이 좀 걸렸어요.
+41|시끄러워서 공부에 ___-(으)ㄹ 수 없어요.|시험 기간이라서 휴대폰을 끄고 공부에 ___-고 있어요.
+42|어려운 프로젝트였지만 우리는 결국 ___-았/었어요.|포기하지 않고 마라톤을 끝까지 달려서 ___-았/었어요.
+43|열심히 노력해서 목표를 ___-았/었어요.|그는 오랫동안 바라던 일을 드디어 ___-았/었어요.
+44|그녀는 가수가 되는 ___-았/었어요.|어릴 때부터 의사가 되고 싶었는데 드디어 ___-았/었어요.
+45|부모님을 ___-아/어서 유학을 가게 됐어요.|친구가 여행을 안 가겠다고 해서 같이 가자고 ___-았/었어요.
+46|부모님이 제 유학을 ___-(으)셨어요.|모든 사람이 그 계획에 찬성했지만 한 사람만 ___-았/었어요.
+47|선생님이 제 발음이 좋다고 ___-(으)셨어요.|아이가 방을 청소해서 엄마가 ___-아/어 주었어요.
+48|재미있는 책이 있으면 저에게 ___-아/어 주세요.|이 식당은 친구가 ___-아/어 준 곳이에요.
+49|형은 졸업하고 바로 은행에 ___-았/었어요.|대학을 졸업한 후에 무역 회사에 ___-고 싶어요.
+50|요즘은 ___이/가 쉽지 않아요.|졸업반 학생들은 ___ 준비 때문에 바빠요.
+51|고등학교를 졸업하고 대학교에 ___-았/었어요.|대학을 졸업한 후 대학원에 ___-(으)ㄹ 계획이에요.
+52|___-고 취업 준비를 하고 있어요.|다음 달이 졸업식이에요. ___-아/어서 마음이 복잡해요.
+53|열심히 공부해서 한국어능력시험에 ___-았/었어요.|대학 입학시험에 ___-아/어서 부모님이 아주 기뻐하셨어요.
+54|면접에서 ___-았/었지만 다시 도전할 거예요.|공부를 안 해서 시험에 ___-(으)ㄹ까 봐 걱정이에요.
+55|저는 반 대표로 ___-았/었어요.|노래 대회에서 1등으로 ___-아/어서 상을 받았어요.
+56|언니는 병원에서 간호사로 ___-아요/어요.|이 회사에서 ___-(으)ㄴ 지 5년이 됐어요.
+57|오늘은 ___이/가 많아서 늦게 퇴근해요.|새로 온 직원에게 회사 ___을/를 가르쳐 주었어요.
+58|이번 학기에 ___을/를 잘 받았어요.|장학금을 받으려면 ___이/가 좋아야 해요.
+59|오늘 경제학 ___은/는 아주 재미있었어요.|교수님의 ___을/를 들으려고 학생들이 많이 왔어요.
+60|이번 주까지 대학교에 ___을/를 내야 해요.|대학원에 가려고 ___에 이름과 주소를 썼어요.
+61|대학교에서 사진 ___을/를 했어요.|같은 취미를 가진 친구들과 ___을/를 하면 재미있어요.
+62|여름 방학에 무역 회사에서 ___(으)로 일했어요.|회사에서 3개월 동안 일을 배우는 ___을/를 뽑고 있어요.
+63|이 문제는 ___에게 물어보는 게 좋겠어요.|그는 컴퓨터 분야의 ___(이)라서 모르는 게 없어요.
+64|전공과 ___-(으)ㄴ 일을 하고 싶어요.|이 책은 한국 역사와 ___-아/어 있어요.
+65|우리 팀이 이번 축제를 ___-았/었어요.|새로운 여행 상품을 ___-는 일을 하고 싶어요.
+66|이 여행사는 제주도 ___이/가 인기가 많아요.|여행사에서 3박 4일 일본 ___을/를 샀어요.
+67|___에서는 친절한 태도가 중요해요.|호텔이나 식당처럼 손님을 돕는 일을 ___(이)라고 해요.
+68|제 꿈은 ___에서 일하는 거예요.|그 ___은/는 비행기 표가 싸서 인기가 많아요.
+69|비행기에서 ___이/가 음료를 나눠 주었어요.|___이/가 되려면 외국어를 잘해야 해요.
+70|버스에 ___이/가 너무 많아서 앉을 자리가 없었어요.|기차가 늦게 도착해서 ___들이 화가 났어요.
+71|여름에는 외국인 ___이/가 많이 와요.|관광지는 사진을 찍는 ___들로 가득했어요.
+72|이 일은 힘들지만 ___이/가 있어요.|봉사 활동을 하면 ___과/와 기쁨을 느낄 수 있어요.
+73|학생들이 한국어를 잘하게 될 때 ___-아요/어요.|어려운 사람을 도와주고 나서 ___-았/었어요.
+74|한국에서 일할 ___이/가 생겼어요.|이번이 마지막 ___(이)니까 꼭 잡으세요.
+75|아르바이트를 하면서 여러 가지 ___을/를 했어요.|외국에서 살아 본 ___이/가 있어요?
+76|그는 오랫동안 노력해서 사업에 ___-았/었어요.|실패해도 포기하지 않으면 언젠가 ___-(으)ㄹ 거예요.
+77|발음을 좋게 하려고 매일 ___-고 있어요.|열심히 ___-(으)면 성적이 오를 거예요.
+78|이제 한국 음식에 많이 ___-았/었어요.|처음에는 젓가락질이 어려웠지만 금방 ___-았/었어요.
+79|이번 발표는 제가 ___-았/었어요.|새 프로젝트를 ___-게 되어서 책임감을 느껴요.
+80|회사를 ___-고 대학원에 다녀요.|건강 때문에 좋아하던 운동을 ___-았/었어요.
+81|공부 시간을 하루에 한 시간씩 ___-았/었어요.|손님이 많아져서 직원 수를 ___-기로 했어요.
+82|건강을 위해 커피를 ___-고 있어요.|돈을 모으려고 쇼핑을 ___-았/었어요.
+83|시간이 ___-아/어서 시험 문제를 다 못 풀었어요.|잠이 ___-(으)면 집중하기 어려워요.
+84|이 학교에는 ___-(으)ㄴ 나라의 학생들이 있어요.|이 식당은 메뉴가 ___-아/어서 고르기 어려워요.
+85|이 직업의 ___은/는 출장이 많다는 거예요.|한국어의 ___ 중 하나는 높임말이 있다는 거예요.
+86|두 나라 문화의 ___을/를 발표했어요.|쌍둥이라서 두 사람의 ___을/를 찾기 어려워요.
+87|아이가 ___ 방을 청소했어요.|부모님의 도움 없이 ___ 학비를 벌었어요.
+88|여러 번 시험을 봤는데 ___ 합격했어요.|기다려도 친구가 안 와서 ___ 혼자 영화를 봤어요.
+89|오늘은 비가 와요. ___ 바람도 많이 불어요.|그 식당은 음식이 맛있어요. ___ 값도 싸요.
+90|영화가 너무 슬퍼서 ___ 울었어요.|좋아하는 노래가 나오자 ___ 따라 불렀어요.
+91|그 옷이 민지 씨에게 정말 ___-아요/어요.|이 가방은 오늘 입은 옷과 ___-네요.
+92|룸메이트와 ___-아/어서 같이 사는 게 편해요.|동아리 친구들과 ___-아/어서 주말마다 같이 놀아요.
+93|___을/를 내서 선생님께 질문했어요.|높은 곳에서 뛰어내리려면 큰 ___이/가 필요해요.
+94|좋아하는 사람에게 마음을 ___-았/었어요.|그동안 숨겼던 비밀을 친구에게 ___-았/었어요.
+95|데이트 신청을 했는데 ___-았/었어요.|도와 달라고 부탁했지만 ___-아/어서 기분이 안 좋았어요.
+96|새로운 일을 시작하는 것이 조금 ___-아요/어요.|혼자 외국에서 사는 것이 처음에는 ___-았/었어요.
+97|학교 ___에 동아리 광고가 붙어 있어요.|궁금한 것이 있으면 홈페이지 ___에 글을 남겨 주세요.
+98|___ 중에서 동아리 활동이 제일 재미있었어요.|신입생들은 ___에 적응하느라 바빠요.
+99|___-(으)ㄹ 때 적성을 먼저 생각하세요.|월급만 보고 ___-(으)면 나중에 후회할 수 있어요.
+100|___을/를 찾으면 일이 즐거워요.|여러 가지 일을 해 보면 나에게 ___이/가 무엇인지 알 수 있어요.
+`,
+  groups: `
+능력,적성,소질,장점
+진로,전공,분야
+손재주,설득력,책임감,리더십,음감,패션 감각
+적성에 맞다,소질이 있다,관심이 있다,이해가 빠르다
+손재주가 좋다,책임감이 강하다,설득력이 있다,음감이 뛰어나다
+진로를 정하다,전공을 살리다,꿈을 이루다
+예술적,실용적,사교적,적극적,긍정적
+활발하다,성실하다,꼼꼼하다
+관심,고민,상담,조언
+조언을 구하다,조언을 하다,설득하다,추천하다,칭찬하다,반대하다
+선택하다,해결하다,적응하다,집중하다,해내다,이루다
+취직하다,취업,진로를 정하다
+진학하다,합격하다,떨어지다,뽑히다,졸업을 앞두다
+근무하다,맡다,그만두다,기획하다,노력하다,성공하다
+업무,학점,강의,입학 원서,동아리 활동,대학 생활
+인턴사원,전문가,승무원,승객,여행객
+여행 상품,서비스업,항공사,게시판
+보람,기회,경험,용기
+늘리다,줄이다,부족하다,다양하다
+특징,차이점,경험
+스스로,결국,더구나,나도 모르게
+잘 어울리다,마음이 맞다,익숙해지다,관련되다,보람을 느끼다
+고백하다,거절당하다,두렵다
+직업을 선택하다,진학하다,근무하다
+적성에 맞는 직업,대학 생활,서비스업
+`,
+  conflicts: `
+잘 어울리다,마음이 맞다
+소질이 있다,관심이 있다
+해결하다,해내다
+손재주,능력
+상담,조언
+선택하다,추천하다
+스스로,나도 모르게
+합격하다,뽑히다
+인턴사원,전문가
+경험,기회
+책임감,리더십
+`
+}];
+/* ================================================================= */
+
+const SELF = {
+  know: { icon: "🟢", label: "잘 알아요", short: "잘 알아요" },
+  seen: { icon: "🟡", label: "본 적은 있지만 뜻은 잘 몰라요", short: "본 적 있지만 잘 몰라요" },
+  new:  { icon: "🔴", label: "처음 보는 단어예요", short: "처음 보는 단어" }
+};
+const CYCLE = 10, S3_COUNT = 5, BANK_SIZE = 5, IDLE_LIMIT = 90;   // 90초 동안 손을 안 대면 학습시간에서 빼요
+
+/* ---------- 도구 ---------- */
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pad = n => String(n).padStart(2, "0");
+const lines = t => t.split("\n").map(s => s.trim()).filter(Boolean);
+function h(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k === "text") e.textContent = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (k === "disabled" || k === "hidden") e[k] = !!v;
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  kids.flat().forEach(c => { if (c != null && c !== false) e.append(c.nodeType ? c : String(c)); });
+  return e;
+}
+const store = {
+  get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+
+/* ---------- 데이터 준비 ---------- */
+function prepare(L) {
+  const W = {};
+  lines(L.words).forEach(l => { const [no, word, desc] = l.split("|"); W[+no] = { no: +no, word, desc }; });
+  lines(L.sentences).forEach(l => { const [no, a, b] = l.split("|"); if (W[+no]) W[+no].sent = [a, b]; });
+  const byWord = {}; Object.values(W).forEach(w => byWord[w.word] = w.no);
+  const groups = lines(L.groups).map(l => l.split(",").map(s => byWord[s.trim()]).filter(Boolean));
+  const conflicts = lines(L.conflicts).map(l => l.split(",").map(s => byWord[s.trim()]).filter(Boolean));
+  return { ...L, W, groups, conflicts, short: L.title.split(" ")[0] };
+}
+const ADV = ["스스로", "결국", "더구나", "나도 모르게"];
+const posOf = w => ADV.includes(w) ? "adv" : w.endsWith("다") ? "pred" : w.endsWith("적") ? "jeok" : "noun";
+
+/* ---------- 상태 ----------
+   R (학생 × 과 × DAY 기록 하나)
+   - s1.entries[no]  : { native, self }             1단계 모국어 뜻, 자기평가
+   - s2.first[no]    : { pick, ok, at }             2단계 1차 (절대 덮어쓰지 않음)
+   - s2.retry[no]    : { pick, ok, at }             2단계 오답 재학습
+   - s3.first[no]    : { pick, ok, sentence, at }   3단계 1차
+   - s3.retry[no]    : { pick, ok, sentence, at }   3단계 오답 재학습 (새 문장)
+   - cycles[i]       : 사이클 진행 상태 + 완료 요약(summary)
+   - wordStatus[no]  : 어휘별 이력과 🟡/🔴 분류 (완료 시)
+   ------------------------------------------------------------ */
+let L = null, R = null, KEY = null;
+const app = document.getElementById("app");
+const recKey = (lesson, day, id) => `prestudy:v3:${lesson}:day${day}:${id}`;
+const normId = v => String(v || "").trim().toUpperCase().replace(/\s+/g, "");
+const who = () => R.student.name ? `${R.student.name} (${R.student.id})` : R.student.id;
+const uuid = () => { try { return crypto.randomUUID(); } catch (e) { return "S" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); } };
+
+/* ---------- 구글 시트와 주고받기 ---------- */
+async function callSheet(method, params, body) {
+  if (!SHEET_URL) throw new Error("no_url");
+  const ctrl = ("AbortController" in window) ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), 20000) : null;
+  try {
+    const url = method === "GET" ? SHEET_URL + "?" + new URLSearchParams(params).toString() : SHEET_URL;
+    const res = await fetch(url, method === "GET" ? { signal: ctrl && ctrl.signal }
+      : { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body), signal: ctrl && ctrl.signal });
+    return await res.json();
+  } finally { if (timer) clearTimeout(timer); }
+}
+const STUDENTS_KEY = "prestudy:v3:students";   // 번호 → 이름, 반 (한 번 확인하면 기억)
+const knownStudent = id => (store.get(STUDENTS_KEY) || {})[id] || null;
+function rememberStudent(id, info) { const m = store.get(STUDENTS_KEY) || {}; m[id] = info; store.set(STUDENTS_KEY, m); }
+const dayNos = () => { const d = L.days.find(x => x.day === R.day); const a = []; for (let i = d.from; i <= d.to; i++) if (L.W[i]) a.push(i); return a; };
+const cycleCount = () => Math.ceil(dayNos().length / CYCLE);
+const cycleNos = (c = R.cycle) => dayNos().slice(c * CYCLE, c * CYCLE + CYCLE);
+const studiedNos = () => dayNos().slice(0, (R.cycle + 1) * CYCLE);   // 지금까지 배운 어휘 (보기에 아직 안 배운 어휘가 나오지 않게)
+const C = () => R.cycles[R.cycle];
+const wd = no => L.W[no].word;
+const rangeText = nos => `${nos[0]}~${nos[nos.length - 1]}`;
+function save() { if (R) { R.updatedAt = Date.now(); store.set(KEY, R); } }
+function ensureCycle() {
+  if (!R.cycles[R.cycle]) R.cycles[R.cycle] = {
+    index: R.cycle, nos: cycleNos(), s1pos: 0,
+    s2: { queue: [], idx: 0, rqueue: [], ridx: 0 },
+    s3: { targets: [], banks: [], bi: 0, fills: [], checked: [], rbanks: [], rbi: 0, rfills: [], rchecked: [] },
+    summary: null
+  };
+}
+
+/* 학습시간: 화면이 보이고, 최근 90초 안에 누르거나 입력한 경우만 셉니다 */
+let lastAct = Date.now();
+["pointerdown", "keydown", "input", "touchstart", "scroll"].forEach(ev => addEventListener(ev, () => lastAct = Date.now(), { passive: true }));
+setInterval(() => {
+  if (!R || R.completed) return;
+  if (document.visibilityState !== "visible") return;
+  if ((Date.now() - lastAct) / 1000 > IDLE_LIMIT) return;
+  R.activeSeconds = (R.activeSeconds || 0) + 1;
+  if (R.activeSeconds % 10 === 0) save();
+}, 1000);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") save(); });
+
+/* 음성 */
+const canSpeak = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+function speak(t) {
+  if (!canSpeak) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t); u.lang = "ko-KR"; u.rate = 0.9;
+    const v = speechSynthesis.getVoices().find(v => (v.lang || "").toLowerCase().startsWith("ko")); if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+if (canSpeak) { try { speechSynthesis.getVoices(); } catch (e) {} }
+const sayBtn = (label, text) => h("button", { type: "button", class: "say", hidden: !canSpeak, onclick: () => speak(text) }, "🔊 " + label);
+
+/* 머리: 사이클 칸 5개 + 지금 단계 진행바 */
+function cycleStrip() {
+  const n = cycleCount();
+  return h("div", { class: "cyc" },
+    h("span", {}, `DAY ${R.day} · CYCLE ${R.cycle + 1}/${n}`),
+    h("span", { class: "cells5", "aria-hidden": "true" }, Array.from({ length: n }, (_, i) => h("i", { class: i < R.cycle ? "done" : i === R.cycle ? "now" : "" }))),
+    h("span", {}, `어휘 ${rangeText(cycleNos())}`));
+}
+function head(stage, cur, total) {
+  return h("div", { class: "head" }, cycleStrip(),
+    h("div", { class: "label" }, h("span", {}, h("b", {}, stage)), h("span", {}, `${cur} / ${total}`)),
+    h("div", { class: "bar", "aria-hidden": "true" }, h("i", { style: `width:${Math.round(cur / total * 100)}%` })));
+}
+function screen(...kids) { app.innerHTML = ""; kids.flat().forEach(k => k && app.append(k)); window.scrollTo(0, 0); }
+
+/* =================================================================
+   시작 화면
+   ================================================================= */
+function renderStart() {
+  R = null; KEY = null;
+  const saved = store.get("prestudy:v3:last") || {};
+  const nameIn = h("input", { type: "text", id: "name", autocomplete: "off", autocapitalize: "characters", spellcheck: "false", placeholder: "예: 4A-01", inputmode: "text" });
+  nameIn.value = saved.id || "";
+  const whoLine = h("p", { class: "hint", style: "margin-top:6px" });
+  const sel = h("select", { id: "lesson" }, LESSONS.map(l => h("option", { value: l.code }, l.title)));
+  if (saved.lesson) sel.value = saved.lesson;
+  const err = h("p", { class: "err", role: "alert" });
+  const days = h("div", { class: "days" });
+  const normName = () => normId(nameIn.value);
+
+  function drawDays() {
+    const lesson = LESSONS.find(l => l.code === sel.value); days.innerHTML = "";
+    lesson.days.forEach(d => {
+      const name = normName(), rec = name ? store.get(recKey(lesson.code, d.day, name)) : null;
+      const cycles = Math.ceil((d.to - d.from + 1) / CYCLE);
+      let st = "시작", done = false;
+      if (rec && rec.completed) {
+        const sent = !SHEET_URL || (rec.sync && rec.sync.status === "ok");
+        st = sent ? "완료 ✓" : "완료 · 제출 안 됨"; done = sent;
+      }
+      else if (rec) st = `이어서 · CYCLE ${rec.cycle + 1}/${cycles}`;
+      days.append(h("div", { class: "dayrow" },
+        h("button", { type: "button", class: "day", onclick: () => go(lesson, d.day) },
+          h("span", {}, h("b", {}, `DAY ${d.day}`), h("small", {}, `어휘 ${d.from}~${d.to}번, 10개씩 ${cycles}번`)),
+          h("span", { class: "st" + (done ? " done" : "") }, st)),
+        rec ? h("div", { class: "dayacts" },
+          rec.completed ? h("button", { type: "button", class: "link strong", onclick: () => go(lesson, d.day, "vocab") }, "📒 나의 어휘장") : null,
+          h("button", { type: "button", class: "link", onclick: () => reset(lesson, d.day) }, "처음부터 다시 하기")) : null));
+    });
+  }
+  let busy = false;
+  async function go(lesson, day, open) {
+    const id = normName();
+    if (!id) { err.textContent = "학생 번호를 먼저 쓰세요."; nameIn.focus(); return; }
+    if (busy) return;
+    let info = knownStudent(id);
+    if (SHEET_URL && !info) {                       // 처음 쓰는 번호는 명단에서 확인
+      busy = true; err.textContent = ""; whoLine.textContent = "번호를 확인하고 있어요…";
+      try {
+        const r = await callSheet("GET", { action: "student", id });
+        if (!r.ok) {
+          busy = false; whoLine.textContent = "";
+          err.textContent = r.error === "not_found" ? "명단에 없는 번호예요. 선생님께 번호를 확인하세요." : "번호를 확인하지 못했어요. 다시 눌러 보세요.";
+          return;
+        }
+        info = { name: r.name, cls: r.cls }; rememberStudent(id, info);
+      } catch (e) {
+        busy = false; whoLine.textContent = "";
+        err.innerHTML = "";
+        err.append("인터넷 연결을 확인하지 못했어요. ",
+          h("button", { type: "button", class: "link", onclick: () => { rememberStudent(id, { name: "", cls: "", unchecked: true }); go(lesson, day, open); } }, "번호 확인 없이 시작하기"));
+        return;
+      }
+      busy = false;
+    }
+    store.set("prestudy:v3:last", { id, lesson: lesson.code });
+    L = prepare(lesson); KEY = recKey(lesson.code, day, id);
+    R = store.get(KEY) || newRecord(lesson, day, { id, name: info ? info.name : "", cls: info ? info.cls : "" });
+    if (info && info.name && !R.student.name) { R.student.name = info.name; R.student.cls = info.cls; }
+    ensureCycle(); save();
+    if (open === "vocab" && R.completed) renderVocab("start"); else render();
+  }
+  function reset(lesson, day) {
+    const name = normName(); if (!name) return;
+    if (confirm(`DAY ${day}를 처음부터 다시 할까요? 지금까지 한 기록이 지워져요.`)) { store.del(recKey(lesson.code, day, name)); drawDays(); }
+  }
+  function showWho() { const i = knownStudent(normName()); whoLine.textContent = i && i.name ? `${i.name} · ${i.cls}` : ""; }
+  nameIn.addEventListener("input", () => { err.textContent = ""; showWho(); drawDays(); });
+  sel.addEventListener("change", drawDays);
+  drawDays(); showWho();
+
+  screen(
+    h("div", { class: "cells", "aria-hidden": "true" }, h("span", { class: "cell" }, "예"), h("span", { class: "cell" }, "습")),
+    h("h1", { style: "margin-top:20px" }, "어휘 예습"),
+    h("p", { class: "muted" }, "10개씩 배우고, 확인하고, 문장에 써 봐요. 이것을 5번 하면 끝나요. 30~40분쯤 걸려요."),
+    h("label", { class: "f", for: "name" }, "학생 번호"), nameIn, whoLine, err,
+    h("label", { class: "f", for: "lesson", style: "margin-top:10px" }, "과"), sel,
+    h("label", { class: "f" }, "공부할 DAY"), days,
+    h("p", { class: "hint" }, "중간에 닫아도 같은 휴대폰, 같은 브라우저에서 이어서 할 수 있어요.")
+  );
+}
+
+function newRecord(lesson, day, student) {
+  return {
+    schema: 3,
+    student,                                  // { id, name, cls } — 연결은 id 기준, 이름은 표시용
+    lesson: { code: lesson.code, title: lesson.title },
+    day,
+    startedAt: Date.now(), updatedAt: Date.now(), completedAt: null,
+    activeSeconds: 0,
+    cycle: 0, phase: "s1",
+    s1: { entries: {} },
+    s2: { first: {}, retry: {} },
+    s3: { first: {}, retry: {} },
+    cycles: [],
+    review: null, wordStatus: null,
+    completed: false
+  };
+}
+
+/* =================================================================
+   화면 나누기
+   ================================================================= */
+function render() {
+  ensureCycle();
+  switch (R.phase) {
+    case "s1": return renderS1();
+    case "s2": return renderQ("first");
+    case "s2sum": return renderS2Sum();
+    case "s2r": return renderQ("retry");
+    case "s2rsum": return renderS2RSum();
+    case "s3": return renderBank("first");
+    case "s3sum": return renderS3Sum();
+    case "s3r": return renderBank("retry");
+    case "cycledone": return renderCycleDone();
+    case "final": return renderFinal();
+  }
+}
+function to(phase) { R.phase = phase; save(); render(); }
+
+/* =================================================================
+   1단계 — 어휘 이해하기 (사이클마다 10개)
+   ================================================================= */
+function renderS1() {
+  const nos = cycleNos(), cy = C(), no = nos[cy.s1pos], w = L.W[no];
+  const e = R.s1.entries[no] || (R.s1.entries[no] = { native: "", self: null });
+  const input = h("input", { type: "text", id: "native", autocomplete: "off", placeholder: "Tiếng Việt / မြန်မာဘာသာ / 日本語 / 中文" });
+  input.value = e.native;
+  const hint = h("p", { class: "hint" });
+  const last = cy.s1pos === nos.length - 1;
+  const next = h("button", { type: "button", class: "btn" }, last ? "저장하고 2단계로 →" : "저장하고 다음 →");
+  const selfs = h("div", { class: "selfs", role: "group", "aria-label": "이 단어를 원래 알고 있었어요?" });
+
+  function refresh() {
+    const ok = e.native.trim() && e.self;
+    next.disabled = !ok;
+    hint.textContent = ok ? "" : !e.native.trim() && !e.self ? "뜻을 쓰고, 아래에서 하나를 고르세요." : !e.native.trim() ? "내 나라 말로 뜻을 쓰세요." : "하나를 고르세요.";
+    for (const b of selfs.children) b.setAttribute("aria-pressed", b.dataset.v === e.self ? "true" : "false");
+  }
+  Object.entries(SELF).forEach(([k, s]) => selfs.append(
+    h("button", { type: "button", class: "self", "data-v": k, onclick: () => { e.self = k; save(); refresh(); } }, `${s.icon} ${s.label}`)));
+  input.addEventListener("input", () => { e.native = input.value; save(); refresh(); });
+  next.addEventListener("click", () => {
+    if (!e.native.trim() || !e.self) return;
+    e.native = e.native.trim();
+    if (!last) { cy.s1pos++; save(); renderS1(); } else startS2();
+  });
+  const back = h("button", { type: "button", class: "btn ghost back", disabled: cy.s1pos === 0, onclick: () => { cy.s1pos--; save(); renderS1(); } }, "← 이전");
+
+  screen(
+    head("1단계 어휘 이해하기", cy.s1pos + 1, nos.length),
+    h("div", { class: "word" }, h("strong", {}, w.word), sayBtn("단어", w.word)),
+    h("div", { class: "desc" },
+      h("div", { class: "t" }, h("span", {}, "쉬운 한국어 뜻"), sayBtn("뜻", w.desc)),
+      h("p", {}, w.desc)),
+    h("div", { style: "margin-top:10px" }, sayBtn("단어 + 뜻 듣기", `${w.word}. ${w.desc}`)),
+    h("label", { class: "f", for: "native" }, "내 나라 말로 뜻을 써 보세요."), input,
+    h("label", { class: "f" }, "이 단어를 원래 알고 있었어요?"), selfs,
+    hint,
+    h("div", { class: "row", style: "margin-top:14px" }, back, next)
+  );
+  refresh();
+}
+
+/* =================================================================
+   2단계 — 쉬운 뜻 보고 어휘 찾기 (3지선다, 사이클마다 10문제)
+   ================================================================= */
+function makeOptions(no, avoid) {
+  const pool = studiedNos();
+  let tries = 0, opts;
+  do {
+    const conf = shuffle([...new Set(L.groups.filter(g => g.includes(no)).flat())].filter(x => x !== no && pool.includes(x)));
+    let pick = conf.slice(0, 2);
+    if (pick.length < 2) pick = pick.concat(shuffle(pool.filter(x => x !== no && !pick.includes(x) && posOf(wd(x)) === posOf(wd(no))))).slice(0, 2);
+    if (pick.length < 2) pick = pick.concat(shuffle(pool.filter(x => x !== no && !pick.includes(x)))).slice(0, 2);
+    opts = shuffle([no, ...pick]);
+    tries++;
+  } while (avoid && tries < 6 && avoid.slice().sort().join() === opts.slice().sort().join());
+  if (avoid && avoid.join() === opts.join()) opts = shuffle(opts);
+  return opts;
+}
+function startS2() {
+  C().s2.queue = shuffle(cycleNos()).map(no => ({ no, options: makeOptions(no) }));
+  C().s2.idx = 0;
+  to("s2");
+}
+
+function renderQ(mode) {
+  const isRetry = mode === "retry", S = C().s2;
+  const queue = isRetry ? S.rqueue : S.queue;
+  const idx = isRetry ? S.ridx : S.idx;
+  const rec = isRetry ? R.s2.retry : R.s2.first;
+  const q = queue[idx], w = L.W[q.no], answered = rec[q.no];
+
+  const fb = h("div", { class: "fb", role: "status" });
+  const next = h("button", { type: "button", class: "btn", hidden: !answered });
+  const opts = h("div", { class: "opts", role: "group" });
+  const marks = ["①", "②", "③"];
+
+  function showResult(pickNo) {
+    for (const b of opts.children) {
+      b.disabled = true;
+      const v = +b.dataset.no;
+      if (v === q.no) b.classList.add("right"); else if (v === pickNo) b.classList.add("wrong");
+    }
+    const ok = pickNo === q.no;
+    fb.className = "fb " + (ok ? "ok" : "no"); fb.innerHTML = "";
+    fb.append(ok ? "맞아요!" : `정답은 '${w.word}'예요.`);
+    const memo = (R.s1.entries[q.no] || {}).native;
+    if (!ok && memo) fb.append(h("div", { class: "memo" }, `내가 쓴 뜻: ${memo}`));
+    next.hidden = false;
+  }
+  q.options.forEach((no, i) => opts.append(h("button", {
+    type: "button", class: "opt", "data-no": no,
+    onclick: () => {
+      if (rec[q.no]) return;
+      rec[q.no] = { pick: no, ok: no === q.no, at: Date.now() };
+      save(); showResult(no); next.focus();
+    }
+  }, `${marks[i]} ${wd(no)}`)));
+
+  const last = idx === queue.length - 1;
+  next.textContent = last ? "결과 보기" : "다음";
+  next.addEventListener("click", () => {
+    if (last) to(isRetry ? "s2rsum" : "s2sum");
+    else { if (isRetry) S.ridx++; else S.idx++; save(); renderQ(mode); }
+  });
+
+  screen(
+    head(isRetry ? "2단계 틀린 어휘 다시 풀기" : "2단계 뜻 보고 어휘 찾기", idx + 1, queue.length),
+    h("p", { class: "muted small" }, "이 뜻에 맞는 어휘를 고르세요."),
+    h("p", { class: "prompt" }, w.desc),
+    opts, fb, next
+  );
+  if (answered) showResult(answered.pick);
+}
+
+const s2WrongOf = cy => cy.s2.queue.filter(q => !(R.s2.first[q.no] && R.s2.first[q.no].ok)).map(q => q.no);
+const s2RetryWrongOf = cy => cy.s2.rqueue.filter(q => !(R.s2.retry[q.no] && R.s2.retry[q.no].ok)).map(q => q.no);
+
+function renderS2Sum() {
+  const cy = C(), total = cy.s2.queue.length, wrong = s2WrongOf(cy);
+  const startRetry = () => {
+    cy.s2.rqueue = shuffle(wrong).map(no => ({ no, options: makeOptions(no, (cy.s2.queue.find(q => q.no === no) || {}).options) }));
+    cy.s2.ridx = 0;
+    to("s2r");
+  };
+  screen(
+    cycleStrip(),
+    h("h2", { style: "margin-top:18px" }, "2단계 1차 결과"),
+    h("p", { class: "big" }, `${total - wrong.length}/${total}`),
+    wrong.length
+      ? [h("p", { class: "muted", style: "margin-top:14px" }, `틀린 어휘 ${wrong.length}개`),
+         h("div", { class: "words" }, wrong.map(wd).join(" · ")),
+         h("p", { class: "muted", style: "margin-top:18px" }, "틀린 어휘만 다시 풀어요. 보기가 바뀌어요."),
+         h("button", { type: "button", class: "btn", onclick: startRetry }, `틀린 ${wrong.length}개 다시 풀기`)]
+      : [h("p", { class: "muted" }, "모두 맞았어요!"),
+         h("button", { type: "button", class: "btn", onclick: startS3 }, "3단계 시작")]
+  );
+}
+function renderS2RSum() {
+  const cy = C(), q = cy.s2.rqueue, still = s2RetryWrongOf(cy);
+  screen(
+    cycleStrip(),
+    h("h2", { style: "margin-top:18px" }, "2단계 다시 풀기 결과"),
+    h("div", { class: "stats" },
+      h("div", {}, h("span", {}, "1차"), h("b", {}, `${cy.s2.queue.length - q.length}/${cy.s2.queue.length}`)),
+      h("div", {}, h("span", {}, "다시 풀기"), h("b", {}, `${q.length - still.length}/${q.length}`)),
+      h("div", {}, h("span", {}, "아직 틀린 어휘"), h("b", {}, `${still.length}개`))),
+    still.length ? h("div", { class: "words" }, still.map(wd).join(" · ")) : null,
+    h("p", { class: "muted", style: "margin-top:18px" }, "이제 어려웠던 어휘 5개를 문장 속에서 써 봐요."),
+    h("button", { type: "button", class: "btn", onclick: startS3 }, "3단계 시작")
+  );
+}
+
+/* =================================================================
+   3단계 — 문장 속 어휘 (보기 6개 + 문제 5개, 사이클마다 1세트)
+   ================================================================= */
+function priority(no) {
+  const e = R.s1.entries[no] || {}, f = R.s2.first[no], r = R.s2.retry[no];
+  let p = 0;
+  if (r && !r.ok) p += 8;          // 다시 풀기에서도 틀림
+  if (f && !f.ok) p += 4;          // 2단계 1차에서 틀림
+  if (e.self === "new") p += 2;    // 처음 보는 단어
+  if (e.self === "seen") p += 1;   // 본 적 있지만 잘 모름
+  return p;
+}
+const conflictWith = (a, b) => L.conflicts.some(c => c.includes(a) && c.includes(b));
+
+function makeBanks(nos, sentIdx, exclude) {
+  const k = Math.ceil(nos.length / BANK_SIZE);
+  const sizes = Array.from({ length: k }, (_, i) => Math.min(BANK_SIZE, nos.length - i * BANK_SIZE));
+  const banks = Array.from({ length: k }, () => []);
+  shuffle(nos).forEach(no => {
+    let b = banks.findIndex((bk, i) => bk.length < sizes[i] && !bk.some(x => conflictWith(x, no)));
+    if (b < 0) b = banks.findIndex((bk, i) => bk.length < sizes[i]);
+    banks[b].push(no);
+  });
+  const all = studiedNos(), used = new Set([...nos, ...(exclude || [])]);
+  return banks.map(items => {
+    const conf = shuffle([...new Set(L.groups.filter(g => g.some(x => items.includes(x))).flat())]);
+    const ok = x => !used.has(x) && all.includes(x) && !items.some(i => conflictWith(i, x));
+    let d = conf.find(ok);
+    if (d == null) d = shuffle(cycleNos()).find(ok);
+    if (d == null) d = shuffle(all).find(ok);
+    if (d == null) d = shuffle(all).find(x => !items.includes(x));
+    used.add(d);
+    return { items: shuffle(items), extra: d, words: shuffle([...items, d]), sent: sentIdx };
+  });
+}
+
+function startS3() {
+  const S = C().s3;
+  const ranked = shuffle(cycleNos()).sort((a, b) => priority(b) - priority(a));
+  S.targets = ranked.slice(0, S3_COUNT);
+  S.banks = makeBanks(S.targets, 0);
+  S.fills = S.banks.map(b => b.items.map(() => null));
+  S.checked = S.banks.map(() => false);
+  S.bi = 0;
+  to("s3");
+}
+
+/* ---------- 어미 붙이기 (빈칸에 들어간 어휘를 문장에 맞게 바꿔 보여 줌) ---------- */
+const SB = 0xAC00;
+const dec = ch => { const c = ch ? ch.charCodeAt(0) - SB : -1; return c < 0 || c > 11171 ? null : { cho: Math.floor(c / 588), jung: Math.floor((c % 588) / 28), jong: c % 28 }; };
+const com = (cho, jung, jong) => String.fromCharCode(SB + cho * 588 + jung * 28 + jong);
+const BIEUP = ["두렵", "어렵", "쉽", "무섭", "가깝", "즐겁", "반갑", "귀엽"];   // ㅂ 불규칙
+const BRIGHT = [0, 8];   // ㅏ, ㅗ
+function formA(stem) {                        // -아/어
+  const L = stem.slice(-1), pre = stem.slice(0, -1), d = dec(L);
+  if (!d) return stem + "어";
+  if (L === "하") return pre + "해";
+  if (d.jong === 17 && BIEUP.includes(stem)) return pre + com(d.cho, d.jung, 0) + "워";
+  if (L === "르" && pre) { const p = dec(pre.slice(-1)); return pre.slice(0, -1) + com(p.cho, p.jung, 8) + (BRIGHT.includes(p.jung) ? "라" : "러"); }
+  if (d.jong) return stem + (BRIGHT.includes(d.jung) ? "아" : "어");
+  const merge = { 0: 0, 4: 4, 1: 1, 5: 5, 8: 9, 13: 14, 20: 6, 11: 10, 18: 4 };
+  return merge[d.jung] != null ? pre + com(d.cho, merge[d.jung], 0) : stem + "어";
+}
+function formPast(stem) { const a = formA(stem), d = dec(a.slice(-1)); return a.slice(0, -1) + com(d.cho, d.jung, 20); }
+function formJong(stem, jong) {               // -(으)ㄴ / -(으)ㄹ
+  const L = stem.slice(-1), pre = stem.slice(0, -1), d = dec(L);
+  if (d && d.jong === 17 && BIEUP.includes(stem)) return pre + com(d.cho, d.jung, 0) + com(11, 13, jong);   // 두려운
+  if (d && d.jong) return stem + (jong === 4 ? "은" : "을");
+  return d ? pre + com(d.cho, d.jung, jong) : stem;
+}
+function formEu(stem) {                       // -(으)면, -(으)려고, -(으)셨어요
+  const L = stem.slice(-1), pre = stem.slice(0, -1), d = dec(L);
+  if (d && d.jong === 17 && BIEUP.includes(stem)) return pre + com(d.cho, d.jung, 0) + "우";
+  return d && d.jong ? stem + "으" : stem;
+}
+const cutAt = s => { const m = s.search(/[\s.,?!']/); return m < 0 ? s.length : m; };
+
+/* 어휘 no 를 tail(빈칸 뒤 글자) 앞에 넣었을 때 → { main: 빈칸에 보일 말, rest: 뒤에 남는 글자, mismatch } */
+function fitWord(no, tail) {
+  const word = wd(no), pos = posOf(word);
+  if (tail.startsWith("-")) {
+    if (pos !== "pred") return { main: word, rest: tail, mismatch: true };
+    const sp = word.lastIndexOf(" "), prefix = sp >= 0 ? word.slice(0, sp + 1) : "", stem = word.slice(sp + 1, -1);
+    const t = tail.slice(1); let s;
+    if (t.startsWith("아요/어요")) s = formA(stem) + "요" + t.slice(5);
+    else if (t.startsWith("아/어")) s = formA(stem) + t.slice(3);
+    else if (t.startsWith("았/었")) s = formPast(stem) + t.slice(3);
+    else if (t.startsWith("(으)")) { const r = t.slice(3); s = (r[0] === "ㄴ" || r[0] === "ㄹ") ? formJong(stem, r[0] === "ㄴ" ? 4 : 8) + r.slice(1) : formEu(stem) + r; }
+    else s = stem + t;
+    const c = cutAt(s);
+    return { main: prefix + s.slice(0, c), rest: s.slice(c) };
+  }
+  if (pos === "pred") return { main: word, rest: tail, mismatch: true };
+  const d = dec(word.slice(-1)), b = !!(d && d.jong), isL = !!(d && d.jong === 8);
+  for (const [k, x, y] of [["을/를", "을", "를"], ["이/가", "이", "가"], ["은/는", "은", "는"], ["과/와", "과", "와"]])
+    if (tail.startsWith(k)) return { main: word + (b ? x : y), rest: tail.slice(k.length) };
+  if (tail.startsWith("(으)로")) return { main: word + (b && !isL ? "으로" : "로"), rest: tail.slice(4) };
+  if (tail.startsWith("(이)")) { const r = tail.slice(3), c = cutAt(r); return { main: word + (b ? "이" : "") + r.slice(0, c), rest: r.slice(c) }; }
+  if (tail.startsWith("이에요")) return { main: word + (b ? "이에요" : "예요"), rest: tail.slice(3) };
+  return { main: word, rest: tail };
+}
+
+
+/* ---------- 3단계 화면: 끌어서 놓기 + 누르기 ---------- */
+function renderBank(mode) {
+  const isRetry = mode === "retry";
+  const S = C().s3;
+  const banks = isRetry ? S.rbanks : S.banks;
+  const bi = isRetry ? S.rbi : S.bi;
+  const fills = (isRetry ? S.rfills : S.fills)[bi];
+  const checkedArr = isRetry ? S.rchecked : S.checked;
+  const rec = isRetry ? R.s3.retry : R.s3.first;
+  const bank = banks[bi], checked = checkedArr[bi];
+  let active = -1;   // 처음에는 어느 빈칸도 미리 고르지 않음
+
+  const bankBox = h("div", { class: "bank", role: "group", "aria-label": "보기" });
+  const list = h("ol", { class: "sents" });
+  const checkBtn = h("button", { type: "button", class: "btn" });
+  const note = h("p", { class: "muted small", style: "margin:10px 0 0" });
+
+  /* 놓기/누르기 동작 */
+  function placeWord(no, j) { const k = fills.indexOf(no); if (k >= 0) fills[k] = null; fills[j] = no; }
+  function commit() { active = -1; save(); draw(); }
+  function tapChip(no) {
+    if (active < 0) active = fills.findIndex(f => f == null);
+    if (active < 0) return;
+    placeWord(no, active); commit();
+  }
+  function tapBlank(i) { if (fills[i] != null) { fills[i] = null; save(); } active = i; draw(); }
+  function drop(src, target) {
+    if (target.blank != null) {
+      const j = target.blank;
+      if (src.chip != null) placeWord(src.chip, j);
+      else if (src.blank != null && src.blank !== j) [fills[src.blank], fills[j]] = [fills[j], fills[src.blank]];
+    } else if (target.bank && src.blank != null) fills[src.blank] = null;
+    commit();
+  }
+
+  /* 손가락/마우스로 끌기 */
+  let drag = null;
+  function hitTest(x, y) {
+    const el = document.elementFromPoint(x, y);
+    const b = el && el.closest(".blank");
+    if (b && b.dataset.i != null) return { blank: +b.dataset.i, el: b };
+    const bk = el && el.closest(".bank");
+    return bk ? { bank: true, el: bk } : {};
+  }
+  function clearOver() { document.querySelectorAll(".over").forEach(e => e.classList.remove("over")); }
+  function bindDrag(el, src, onTap) {
+    el.addEventListener("pointerdown", e => {
+      if (checked || (e.pointerType === "mouse" && e.button !== 0)) return;
+      const labelNo = src.chip != null ? src.chip : fills[src.blank];
+      drag = { src, el, x0: e.clientX, y0: e.clientY, moved: false, ghost: null, label: labelNo != null ? wd(labelNo) : null };
+      try { el.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+    el.addEventListener("pointermove", e => {
+      if (!drag || drag.el !== el) return;
+      if (!drag.moved && drag.label != null && Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 8) {   // 빈 빈칸은 끌 수 없고 누르기만
+        drag.moved = true;
+        drag.ghost = h("div", { class: "ghost" }, drag.label); document.body.append(drag.ghost);
+        el.classList.add("dragging");
+      }
+      if (!drag.moved) return;
+      e.preventDefault();
+      drag.ghost.style.left = e.clientX + "px"; drag.ghost.style.top = e.clientY + "px";
+      clearOver(); const t = hitTest(e.clientX, e.clientY);
+      if (t.el && !(t.bank && src.chip != null)) t.el.classList.add("over");
+      if (e.clientY > innerHeight - 70) scrollBy(0, 14); else if (e.clientY < 70) scrollBy(0, -14);
+    });
+    const end = (e, cancel) => {
+      if (!drag || drag.el !== el) return;
+      const d = drag; drag = null;
+      if (d.ghost) d.ghost.remove(); el.classList.remove("dragging"); clearOver();
+      if (cancel) return;
+      if (!d.moved) onTap(); else drop(d.src, hitTest(e.clientX, e.clientY));
+    };
+    el.addEventListener("pointerup", e => end(e, false));
+    el.addEventListener("pointercancel", e => end(e, true));
+    el.addEventListener("click", e => { if (e.detail === 0) onTap(); });   // 키보드(Enter/Space)로 누를 때
+  }
+
+  function draw() {
+    bankBox.innerHTML = ""; list.innerHTML = "";
+    bank.words.forEach(no => {
+      const usedAt = fills.indexOf(no);
+      const cls = "chip" + (usedAt >= 0 && !checked ? " used" : "") + (checked && no === bank.extra ? " unused" : "");
+      const chip = h("button", { type: "button", class: cls, disabled: checked }, wd(no));
+      bindDrag(chip, { chip: no }, () => tapChip(no));
+      bankBox.append(chip);
+    });
+    bank.items.forEach((no, i) => {
+      const [before, tail] = L.W[no].sent[bank.sent].split("___");
+      const filled = fills[i] != null, ok = filled && fills[i] === no;
+      const fit = filled ? fitWord(fills[i], tail) : null;
+      let cls = "blank";
+      if (checked) cls += ok ? " ok" : " no";
+      else if (i === active) cls += " active";
+      const blank = h("button", { type: "button", class: cls, disabled: checked, "data-i": i,
+        "aria-label": `${i + 1}번 빈칸${filled ? ": " + fit.main : ""}` }, filled ? fit.main : "\u00a0");
+      if (!checked) bindDrag(blank, { blank: i }, () => tapBlank(i));
+      const li = h("li", { class: checked ? (ok ? "ok" : "no") : "" },
+        h("span", { class: "n" }, `${i + 1}`), " ", before, blank,
+        filled && !fit.mismatch ? fit.rest : h("span", { class: "gram" }, tail));
+      if (checked) li.append(ok
+        ? h("span", { class: "mark ok" }, `✅ ${fit.main}`)
+        : h("span", { class: "mark no" }, "❌ 틀렸어요",
+            h("span", { class: "pair" }, "내가 고른 답: ", h("b", {}, wd(fills[i]))),
+            h("span", { class: "pair" }, "맞는 어휘: ", h("b", {}, wd(no)), ` (${fitWord(no, tail).main})`)));
+      list.append(li);
+    });
+    const full = fills.every(f => f != null), last = bi === banks.length - 1;
+    if (!checked) {
+      checkBtn.textContent = "정답 확인"; checkBtn.disabled = !full;
+      note.textContent = full ? "다 채웠어요. 정답을 확인하세요." : "보기를 끌어서 빈칸에 놓으세요. 빈칸을 먼저 누르고 보기를 눌러도 돼요. 한 어휘는 쓰지 않아요.";
+    } else {
+      const right = bank.items.filter((no, i) => fills[i] === no).length;
+      checkBtn.disabled = false; checkBtn.textContent = last ? (isRetry ? "CYCLE 결과 보기" : "결과 보기") : "다음 문제";
+      note.textContent = `${right}/${bank.items.length} 맞았어요. 쓰지 않는 어휘: ${wd(bank.extra)}`;
+    }
+  }
+  checkBtn.addEventListener("click", () => {
+    if (!checked) {
+      if (!fills.every(f => f != null)) return;
+      bank.items.forEach((no, i) => rec[no] = { pick: fills[i], ok: fills[i] === no, sentence: bank.sent, at: Date.now() });
+      checkedArr[bi] = true; save(); renderBank(mode); return;
+    }
+    const last = bi === banks.length - 1;
+    if (isRetry) { if (last) finishCycle(); else { S.rbi++; save(); renderBank(mode); } }
+    else { if (last) to("s3sum"); else { S.bi++; save(); renderBank(mode); } }
+  });
+
+  const totalItems = banks.reduce((s, b) => s + b.items.length, 0);
+  const doneItems = banks.slice(0, bi).reduce((s, b) => s + b.items.length, 0) + (checked ? bank.items.length : 0);
+  screen(
+    head(isRetry ? "3단계 새 문장으로 다시 풀기" : "3단계 문장 속 어휘", doneItems, totalItems),
+    h("p", { class: "muted small", style: "margin:0 0 4px" }, "빈칸에 알맞은 어휘를 넣으세요. 넣으면 문장에 맞는 모양으로 바뀌어요."),
+    bankBox, list, note, checkBtn
+  );
+  draw();
+}
+
+
+const s3WrongOf = cy => cy.s3.targets.filter(no => !(R.s3.first[no] && R.s3.first[no].ok));
+function renderS3Sum() {
+  const cy = C(), total = cy.s3.targets.length, wrong = s3WrongOf(cy);
+  const startRetry = () => {
+    const S = cy.s3;
+    S.rbanks = makeBanks(wrong, 1, S.banks.map(b => b.extra));
+    S.rfills = S.rbanks.map(b => b.items.map(() => null));
+    S.rchecked = S.rbanks.map(() => false);
+    S.rbi = 0;
+    to("s3r");
+  };
+  screen(
+    cycleStrip(),
+    h("h2", { style: "margin-top:18px" }, "3단계 1차 결과"),
+    h("p", { class: "big" }, `${total - wrong.length}/${total}`),
+    wrong.length
+      ? [h("p", { class: "muted", style: "margin-top:14px" }, `틀린 어휘 ${wrong.length}개`),
+         h("div", { class: "words" }, wrong.map(wd).join(" · ")),
+         h("p", { class: "muted", style: "margin-top:18px" }, "같은 어휘를 새 문장에서 다시 풀어요."),
+         h("button", { type: "button", class: "btn", onclick: startRetry }, `틀린 ${wrong.length}개 새 문장으로 다시 풀기`)]
+      : [h("p", { class: "muted" }, "모두 맞았어요!"),
+         h("button", { type: "button", class: "btn", onclick: finishCycle }, "CYCLE 결과 보기")]
+  );
+}
+
+/* =================================================================
+   어휘별 이력과 분류
+   ================================================================= */
+function journey(no) {
+  const steps = [];
+  if (R.s2.first[no]) steps.push({ label: "2단계", ok: R.s2.first[no].ok });
+  if (R.s2.retry[no]) steps.push({ label: "2단계 다시", ok: R.s2.retry[no].ok });
+  if (R.s3.first[no]) steps.push({ label: "3단계", ok: R.s3.first[no].ok });
+  if (R.s3.retry[no]) steps.push({ label: "3단계 다시", ok: R.s3.retry[no].ok });
+  return steps;
+}
+/* 한 번이라도 틀린 어휘만: 마지막 시도에서 맞혔으면 🟡 복습 권장, 마지막에도 틀렸으면 🔴 집중 복습 */
+function classify(nos) {
+  const yellow = [], red = [], status = {};
+  nos.forEach(no => {
+    const steps = journey(no);
+    if (!steps.some(s => !s.ok)) return;
+    const kind = steps[steps.length - 1].ok ? "yellow" : "red";
+    (kind === "yellow" ? yellow : red).push(no);
+    status[no] = { kind, steps };
+  });
+  return { yellow, red, status };
+}
+
+/* 여러 사이클을 단계별로 합산 */
+function stageTotals(cycles) {
+  const t = { n: 0, native: 0, know: 0, seen: 0, new: 0,
+              s2: 0, s2ok: 0, s2r: 0, s2rok: 0, s3: 0, s3ok: 0, s3r: 0, s3rok: 0 };
+  cycles.forEach(cy => {
+    cy.nos.forEach(no => {
+      const e = R.s1.entries[no] || {};
+      t.n++; if (e.native && e.native.trim()) t.native++; if (e.self) t[e.self]++;
+    });
+    cy.s2.queue.forEach(q => { t.s2++; if (R.s2.first[q.no] && R.s2.first[q.no].ok) t.s2ok++; });
+    cy.s2.rqueue.forEach(q => { t.s2r++; if (R.s2.retry[q.no] && R.s2.retry[q.no].ok) t.s2rok++; });
+    cy.s3.targets.forEach(no => { t.s3++; if (R.s3.first[no] && R.s3.first[no].ok) t.s3ok++; });
+    cy.s3.rbanks.flatMap(b => b.items).forEach(no => { t.s3r++; if (R.s3.retry[no] && R.s3.retry[no].ok) t.s3rok++; });
+  });
+  return t;
+}
+
+/* =================================================================
+   사이클 완료
+   ================================================================= */
+function finishCycle() {
+  const cy = C(), t = stageTotals([cy]), rv = classify(cy.nos);
+  cy.summary = {                          // 교사용 대시보드를 위한 사이클별 기록
+    cycle: R.cycle + 1, words: rangeText(cy.nos), finishedAt: Date.now(),
+    s1: { done: t.native, total: t.n, know: t.know, seen: t.seen, new: t.new },
+    s2: { first: t.s2ok, total: t.s2, retry: t.s2rok, retryTotal: t.s2r },
+    s3: { first: t.s3ok, total: t.s3, retry: t.s3rok, retryTotal: t.s3r },
+    yellow: rv.yellow, red: rv.red
+  };
+  to("cycledone");
+}
+function renderCycleDone() {
+  const cy = C(), s = cy.summary, n = cycleCount(), last = R.cycle === n - 1;
+  const pct = Math.round((R.cycle + 1) / n * 100);
+  const again = [...s.red.map(no => "🔴 " + wd(no)), ...s.yellow.map(no => "🟡 " + wd(no))];
+  screen(
+    h("h2", {}, `🎉 CYCLE ${R.cycle + 1} 완료`),
+    h("p", { class: "muted" }, `어휘 ${s.words} 학습 완료`),
+    h("div", { class: "stats" },
+      h("div", {}, h("span", {}, "1단계"), h("b", {}, `${s.s1.done}/${s.s1.total} 완료`)),
+      h("div", {}, h("span", {}, "2단계"), h("b", {}, `1차 ${s.s2.first}/${s.s2.total}` + (s.s2.retryTotal ? `, 다시 ${s.s2.retry}/${s.s2.retryTotal}` : ""))),
+      h("div", {}, h("span", {}, "3단계"), h("b", {}, `1차 ${s.s3.first}/${s.s3.total}` + (s.s3.retryTotal ? `, 다시 ${s.s3.retry}/${s.s3.retryTotal}` : "")))),
+    again.length ? [h("p", { class: "muted", style: "margin-top:16px" }, "다시 볼 단어"), h("div", { class: "words" }, again.join("  "))]
+                 : h("p", { class: "allok" }, "이번 10개는 한 번도 틀리지 않았어요!"),
+    h("div", { class: "total" },
+      h("div", { class: "label" }, h("span", {}, "전체 진행률"), h("b", {}, `${pct}%`)),
+      h("div", { class: "bar" }, h("i", { style: `width:${pct}%` }))),
+    h("button", { type: "button", class: "btn", style: "margin-top:22px", onclick: () => {
+      if (last) return finish();
+      R.cycle++; ensureCycle(); to("s1");
+    } }, last ? "최종 결과 보기" : "다음 10개 시작 →")
+  );
+}
+
+/* =================================================================
+   최종 결과
+   ================================================================= */
+function finish() {
+  const rv = classify(dayNos());
+  R.review = { yellow: rv.yellow, red: rv.red };
+  R.wordStatus = rv.status;
+  R.completed = true; R.completedAt = Date.now();
+  R.sync = { submissionId: uuid(), status: "pending", attempts: 0, receivedAt: null, lastError: null };
+  to("final");
+}
+const minutes = () => Math.max(1, Math.round((R.activeSeconds || 0) / 60));
+function resultText() {
+  const t = stageTotals(R.cycles), rv = classify(dayNos());
+  const out = [
+    `${L.short} DAY ${R.day} | ${who()}`,
+    "",
+    `① 어휘학습 ${t.native}/${t.n} 완료`,
+    "",
+    "② 뜻→어휘",
+    `1차 ${t.s2ok}/${t.s2}`,
+    t.s2r ? `오답 재학습 ${t.s2rok}/${t.s2r}` : "오답 재학습 없음",
+    "",
+    "③ 문맥 속 어휘",
+    `1차 ${t.s3ok}/${t.s3}`,
+    t.s3r ? `오답 재학습 ${t.s3rok}/${t.s3r}` : "오답 재학습 없음",
+    "",
+    `🟡 복습 권장 ${rv.yellow.length}개`,
+    `🔴 집중 복습 ${rv.red.length}개`
+  ];
+  if (rv.red.length) out.push(`🔴 ${rv.red.map(wd).join(" · ")}`);
+  out.push("", `학습시간 ${minutes()}분`, "", "예습 완료 ✓");
+  return out.join("\n");
+}
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); return true; } catch (e) {}
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = t; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, t.length);
+    const ok = document.execCommand("copy"); ta.remove(); return ok;
+  } catch (e) { return false; }
+}
+function journeyList(nos, rv) {
+  return h("ul", { class: "journey" }, nos.map(no => h("li", {},
+    h("b", {}, wd(no)),
+    h("span", {}, rv.status[no].steps.map(s => `${s.label} ${s.ok ? "✅" : "❌"}`).join(" → ")))));
+}
+const row = (k, v) => h("div", {}, h("span", {}, k), h("b", {}, v));
+/* =================================================================
+   예습 결과 → 구글 시트 (휴대폰 저장과 함께, 실패해도 기록은 그대로)
+   ================================================================= */
+function buildPayload() {
+  const t = stageTotals(R.cycles), rv = classify(dayNos()), words = a => a.map(wd);
+  const s2wrong = [], s2unres = [], s3wrong = [], s3unres = [];
+  R.cycles.forEach(cy => {
+    s2WrongOf(cy).forEach(n => s2wrong.push(n)); s2RetryWrongOf(cy).forEach(n => s2unres.push(n));
+    s3WrongOf(cy).forEach(n => s3wrong.push(n));
+    cy.s3.rbanks.flatMap(b => b.items).forEach(n => { if (!(R.s3.retry[n] && R.s3.retry[n].ok)) s3unres.push(n); });
+  });
+  return {
+    action: "prestudy", app_version: APP_VERSION,
+    submission_id: R.sync.submissionId,
+    student_id: R.student.id,
+    lesson_code: L.code, lesson_title: L.title, day: R.day,
+    completed: true, completed_at: R.completedAt,
+    summary: {                                   // 모국어 뜻은 보내지 않음 (휴대폰에만 보관)
+      s1_done: t.native, s1_total: t.n, know: t.know, seen: t.seen, new: t.new,
+      s2_first: t.s2ok, s2_total: t.s2, s2_first_wrong: words(s2wrong), s2_retry_ok: t.s2rok, s2_retry_total: t.s2r, s2_unresolved: words(s2unres),
+      s3_first: t.s3ok, s3_total: t.s3, s3_first_wrong: words(s3wrong), s3_retry_ok: t.s3rok, s3_retry_total: t.s3r, s3_unresolved: words(s3unres),
+      yellow: words(rv.yellow), red: words(rv.red), minutes: minutes(),
+      cycles: R.cycles.map(cy => cy.summary && { ...cy.summary, yellow: words(cy.summary.yellow), red: words(cy.summary.red) })
+    }
+  };
+}
+let sending = false;
+async function submitPrestudy(onChange) {
+  if (!SHEET_URL || !R || !R.completed || sending) return;
+  if (!R.sync) R.sync = { submissionId: uuid(), status: "pending", attempts: 0 };
+  if (R.sync.status === "ok") return;
+  const rec = R, key = KEY;                      // 보내는 동안 화면이 바뀌어도 이 기록에 저장
+  sending = true; rec.sync.status = "sending"; rec.sync.attempts++; store.set(key, rec); onChange && onChange();
+  try {
+    const r = await callSheet("POST", null, buildPayload());
+    if (r && r.ok) { rec.sync.status = "ok"; rec.sync.receivedAt = r.received_at || null; rec.sync.lastError = null; }
+    else { rec.sync.status = "fail"; rec.sync.lastError = (r && r.error) || "unknown"; }
+  } catch (e) {
+    rec.sync.status = "fail"; rec.sync.lastError = e.name === "AbortError" ? "timeout" : "network";
+  }
+  sending = false; store.set(key, rec); onChange && onChange();
+}
+function syncBox() {
+  if (!SHEET_URL) return null;
+  const box = h("div", { class: "sync", role: "status" });
+  const draw = () => {
+    if (!R || !R.sync || !box.isConnected && box.dataset.drawn) return;
+    box.dataset.drawn = "1"; box.innerHTML = "";
+    const st = R.sync.status;
+    if (st === "ok") {
+      box.className = "sync ok";
+      box.append(h("b", {}, "✅ 예습 결과가 제출되었습니다."), R.sync.receivedAt ? h("span", {}, `받은 시각 ${R.sync.receivedAt}`) : null);
+    } else if (st === "sending" || st === "pending") {
+      box.className = "sync wait";
+      box.append(h("b", {}, "⏳ 결과를 선생님께 보내고 있어요…"));
+    } else {
+      box.className = "sync fail";
+      box.append(h("b", {}, "⚠️ 결과를 보내지 못했어요."),
+        h("span", {}, "예습 기록은 이 휴대폰에 그대로 있어요. 인터넷 연결을 확인하고 다시 제출하세요."),
+        h("button", { type: "button", class: "btn", style: "margin-top:10px", onclick: () => submitPrestudy(draw) }, "다시 제출"));
+    }
+  };
+  draw();
+  if (R.sync && R.sync.status !== "ok") setTimeout(() => submitPrestudy(draw), 0);   // 화면이 열릴 때 자동으로 한 번 보내기
+  return box;
+}
+addEventListener("online", () => { if (R && R.completed && R.sync && R.sync.status === "fail" && R.phase === "final") renderFinal(); });
+
+function renderFinal() {
+  const t = stageTotals(R.cycles), rv = classify(dayNos()), text = resultText();
+  const msg = h("p", { class: "copied", role: "status" });
+  screen(
+    h("h2", {}, `📘 ${L.title} / DAY ${R.day}`),
+    h("p", { class: "muted" }, `학생: ${who()}`),
+    syncBox(),
+
+    h("p", { class: "kind" }, "① 어휘 학습"),
+    h("div", { class: "stats" },
+      row("학습", `${t.native}/${t.n} 완료`),
+      row(`${SELF.know.icon} ${SELF.know.short}`, `${t.know}`),
+      row(`${SELF.seen.icon} ${SELF.seen.short}`, `${t.seen}`),
+      row(`${SELF.new.icon} ${SELF.new.short}`, `${t.new}`)),
+
+    h("p", { class: "kind" }, "② 뜻 → 어휘"),
+    h("div", { class: "stats" },
+      row("1차 총점", `${t.s2ok}/${t.s2}`),
+      row("오답", `${t.s2 - t.s2ok}개`),
+      row("오답 재학습", t.s2r ? `${t.s2rok}/${t.s2r}` : "없음"),
+      row("최종 미해결", `${t.s2r - t.s2rok}개`)),
+
+    h("p", { class: "kind" }, "③ 문맥 속 어휘"),
+    h("div", { class: "stats" },
+      row("1차 총점", `${t.s3ok}/${t.s3}`),
+      row("오답 재학습", t.s3r ? `${t.s3rok}/${t.s3r}` : "없음"),
+      row("최종 미해결", `${t.s3r - t.s3rok}개`)),
+
+    h("div", { class: "stats", style: "margin-top:22px" },
+      row("🟡 복습 권장", `${rv.yellow.length}개`),
+      row("🔴 집중 복습", `${rv.red.length}개`),
+      row("학습시간", `${minutes()}분`)),
+
+    h("p", { class: "kind", style: "margin-top:28px" }, SHEET_URL ? "결과 복사 (자동 제출이 안 될 때만)" : "선생님께 보낼 결과"),
+    h("button", { type: "button", class: "btn", onclick: async () => {
+      const ok = await copyText(text);
+      msg.className = "copied" + (ok ? "" : " fail");
+      msg.textContent = ok ? "복사했어요. 카카오톡에 붙여넣어 보내세요." : "자동 복사가 안 돼요. 아래 글을 길게 눌러 복사하세요.";
+    } }, "결과 복사"),
+    msg,
+    h("pre", { class: "out" }, text),
+
+    rv.red.length ? [h("p", { class: "kind" }, `🔴 집중 복습 ${rv.red.length}개`),
+      h("p", { class: "muted small" }, "마지막까지 틀린 어휘예요. 수업 전에 뜻을 한 번 더 보세요."), journeyList(rv.red, rv)] : null,
+    rv.yellow.length ? [h("p", { class: "kind" }, `🟡 복습 권장 ${rv.yellow.length}개`),
+      h("p", { class: "muted small" }, "처음에는 틀렸지만 다시 공부해서 맞힌 어휘예요."), journeyList(rv.yellow, rv)] : null,
+    h("button", { type: "button", class: "btn", style: "margin-top:28px", onclick: () => renderVocab("final") }, "📒 나의 어휘장 열기"),
+    h("p", { class: "muted small", style: "margin:8px 0 0" }, "오늘 공부한 50개를 모아 보고, 가리고 복습할 수 있어요. 점수와 학습시간에는 들어가지 않아요."),
+    h("button", { type: "button", class: "btn ghost", style: "margin-top:14px", onclick: renderStart }, "처음 화면으로")
+  );
+}
+
+/* =================================================================
+   📒 나의 어휘장 — 예습을 끝낸 DAY에서만 열림
+   · 점수, 퀴즈, 학습시간 없음 (R.completed 뒤라 학습시간 타이머가 멈춰 있음)
+   · 기록(R)은 읽기만 하고 바꾸지 않음. 필터/가리기 설정만 따로 저장
+   ================================================================= */
+const VOCAB_PREFS = "prestudy:v2:vocabprefs";
+const HIDE_FIELDS = [
+  { key: "word",   label: "어휘 가리기" },
+  { key: "desc",   label: "쉬운 한국어 뜻 가리기" },
+  { key: "native", label: "내 나라 말 뜻 가리기" }
+];
+function renderVocab(from) {
+  if (!R || !R.completed) return renderStart();          // 예습을 끝내야만 열림
+  const prefs = store.get(VOCAB_PREFS) || {};
+  let filter = prefs.filter || "all";
+  const hide = { word: false, desc: false, native: false, ...(prefs.hide || {}) };
+  const revealed = new Set();                             // 가린 칸 중 눌러서 연 칸
+  const rv = classify(dayNos());
+  const kindOf = no => rv.status[no] ? rv.status[no].kind : null;
+  const isNew = no => (R.s1.entries[no] || {}).self === "new";
+  const FILTERS = [
+    { key: "all",    label: "전체",          test: () => true },
+    { key: "yellow", label: "🟡 복습 권장",  test: no => kindOf(no) === "yellow" },
+    { key: "red",    label: "🔴 집중 복습",  test: no => kindOf(no) === "red" },
+    { key: "new",    label: "처음 본 단어",  test: isNew }
+  ];
+  const keep = () => store.set(VOCAB_PREFS, { filter, hide });
+
+  const filterBox = h("div", { class: "vfilters", role: "group", "aria-label": "골라 보기" });
+  const hideBox = h("div", { class: "vhides", role: "group", "aria-label": "가리기" });
+  const list = h("ol", { class: "vlist" });
+  const countLine = h("p", { class: "muted small", style: "margin:12px 0 0" });
+
+  const shown = (no, key) => !hide[key] || revealed.has(no + ":" + key);   // 가려진 칸은 🔊도 숨김 (소리로 답이 새지 않게)
+  function field(no, key, content, cls) {
+    if (!hide[key] || revealed.has(no + ":" + key))
+      return h("button", { type: "button", class: cls + (hide[key] ? " open" : ""), disabled: !hide[key],
+        onclick: () => { revealed.delete(no + ":" + key); draw(); } }, content);
+    return h("button", { type: "button", class: "cover " + cls, "aria-label": "눌러서 보기",
+      onclick: () => { revealed.add(no + ":" + key); draw(); } }, "눌러서 보기");
+  }
+  function draw() {
+    filterBox.innerHTML = ""; hideBox.innerHTML = ""; list.innerHTML = "";
+    FILTERS.forEach(f => {
+      const n = dayNos().filter(f.test).length;
+      filterBox.append(h("button", { type: "button", class: "vchip", "aria-pressed": filter === f.key ? "true" : "false",
+        onclick: () => { filter = f.key; revealed.clear(); keep(); draw(); } }, `${f.label} ${n}`));
+    });
+    HIDE_FIELDS.forEach(f => hideBox.append(h("button", { type: "button", class: "vchip hide", "aria-pressed": hide[f.key] ? "true" : "false",
+      onclick: () => { hide[f.key] = !hide[f.key]; [...revealed].forEach(k => k.endsWith(":" + f.key) && revealed.delete(k)); keep(); draw(); } }, f.label)));
+
+    const f = FILTERS.find(x => x.key === filter) || FILTERS[0];
+    const nos = dayNos().filter(f.test);
+    countLine.textContent = Object.values(hide).some(Boolean)
+      ? `${nos.length}개. 가린 칸을 누르면 보이고, 다시 누르면 가려져요.` : `${nos.length}개`;
+    if (!nos.length) { list.append(h("li", { class: "vempty" }, "여기에 해당하는 어휘가 없어요.")); return; }
+    nos.forEach(no => {
+      const w = L.W[no], e = R.s1.entries[no] || {}, k = kindOf(no);
+      const tags = h("span", { class: "vtags" },
+        k === "red" ? h("span", { class: "vtag red" }, "집중 복습") : null,
+        k === "yellow" ? h("span", { class: "vtag yellow" }, "복습 권장") : null,
+        isNew(no) ? h("span", { class: "vtag new" }, "처음 본 단어") : null);
+      list.append(h("li", {},
+        h("div", { class: "vtop" }, h("span", { class: "vno" }, no), tags),
+        h("div", { class: "vrow" }, field(no, "word", w.word, "vword"), shown(no, "word") ? sayBtn("", w.word) : null),
+        h("div", { class: "vrow" }, field(no, "desc", w.desc, "vdesc"), shown(no, "desc") ? sayBtn("", w.desc) : null),
+        h("div", { class: "vrow" }, h("span", { class: "vlabel" }, "내가 쓴 뜻"), field(no, "native", e.native || "(없음)", "vnative"))));
+    });
+  }
+
+  screen(
+    h("button", { type: "button", class: "link", onclick: () => from === "start" ? renderStart() : renderFinal() },
+      from === "start" ? "← 처음 화면" : "← 결과 화면"),
+    h("h2", { style: "margin-top:8px" }, "📒 나의 어휘장"),
+    h("p", { class: "muted" }, `${L.title} / DAY ${R.day} · ${who()}`),
+    h("p", { class: "muted small" }, "점수 없이 자유롭게 복습하는 곳이에요. 가리고 떠올려 본 뒤 눌러서 확인하세요."),
+    h("div", { class: "vctrl" },
+      h("p", { class: "vcap" }, "골라 보기"), filterBox,
+      h("p", { class: "vcap" }, "가리기"), hideBox),
+    countLine, list,
+    h("button", { type: "button", class: "btn ghost", style: "margin-top:24px", onclick: () => from === "start" ? renderStart() : renderFinal() },
+      from === "start" ? "처음 화면으로" : "결과 화면으로")
+  );
+  draw();
+}
+
+renderStart();
+</script>
+</body>
+</html>
