@@ -193,6 +193,12 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--ink)}
 .sync b{display:block;font-size:1.02rem}.sync span{display:block;color:var(--muted);font-size:.88rem;margin-top:4px}
 .sync.ok{border-color:var(--ok);background:var(--ok-soft)}.sync.ok b{color:var(--ok)}
 .sync.fail{border-color:var(--grid);background:var(--grid-soft)}.sync.fail b{color:var(--grid)}
+.answer{margin-top:8px;padding:10px 14px 12px;border:2px solid var(--ok);border-radius:10px;background:var(--ok-soft)}
+.answer-t{display:block;font-size:.85rem;font-weight:600;color:var(--ok);line-height:1.4}
+.answer p{margin:4px 0 0;font-size:1.05rem;line-height:1.9;color:var(--ink)}
+.answer .ans{display:inline-block;padding:0 10px;border:2px solid var(--ok);border-radius:6px;background:var(--surface);color:var(--ok);font-weight:700;line-height:1.7}
+.sents li .pair{display:block;margin-top:8px;font-size:.92rem;line-height:1.5;color:var(--muted)}
+.sents li .pair b{color:var(--grid);font-weight:600}.sents li .pair b.ok{color:var(--ok)}
 pre.out{white-space:pre-wrap;word-break:break-word;font:inherit;font-size:.92rem;background:var(--surface);
   border:1px dashed var(--line);border-radius:10px;padding:14px;margin:14px 0 0;user-select:text;-webkit-user-select:text}
 .copied{color:var(--ok);font-weight:600;margin:10px 0 0;min-height:1.4em}.copied.fail{color:var(--grid)}
@@ -332,7 +338,7 @@ const LESSONS = [{
 5|제 ___은/는 한국어교육이에요.|대학에서 경영학을 ___(으)로 공부했어요.
 6|저는 컴퓨터 ___에서 일하고 싶어요.|그는 의학 ___에서 유명한 의사예요.
 7|제 ___은/는 누구와도 금방 친해지는 거예요.|이 휴대폰의 ___은/는 배터리가 오래 간다는 거예요.
-8|할아버지의 ___(으)로 만든 나무 의자예요.|그 친구는 손으로 하는 일은 다 잘해요. ___이/가 정말 뛰어나요.
+8|할아버지는 ___이/가 뛰어나셔서 나무 의자를 직접 만드셨어요.|그 친구는 손으로 하는 일은 다 잘해요. ___이/가 정말 뛰어나요.
 9|언니는 ___-아/어서 액세서리를 직접 만들어요.|고장 난 자전거를 금방 고치다니 정말 ___-네요.
 10|예가 많아서 이 글은 ___이/가 높아요.|그의 말은 ___이/가 부족해서 아무도 믿지 않았어요.
 11|민수 씨의 발표는 ___-아/어서 모두 찬성했어요.|근거가 확실한 글이 더 ___-아요/어요.
@@ -1085,11 +1091,13 @@ function renderBank(mode) {
       const li = h("li", { class: checked ? (ok ? "ok" : "no") : "" },
         h("span", { class: "n" }, `${i + 1}`), " ", before, blank,
         filled && !fit.mismatch ? fit.rest : h("span", { class: "gram" }, tail));
-      if (checked) li.append(ok
+      if (checked) li.append(...[].concat(ok
         ? h("span", { class: "mark ok" }, `✅ ${fit.main}`)
-        : h("span", { class: "mark no" }, "❌ 틀렸어요",
-            h("span", { class: "pair" }, "내가 고른 답: ", h("b", {}, wd(fills[i]))),
-            h("span", { class: "pair" }, "맞는 어휘: ", h("b", {}, wd(no)), ` (${fitWord(no, tail).main})`)));
+        : [h("span", { class: "mark no" }, "❌ 틀렸어요"),
+           (() => { const right = fitWord(no, tail);           // 정답이 들어간 완성 문장
+             return h("div", { class: "answer" }, h("span", { class: "answer-t" }, "✅ 정답 문장"),
+               h("p", {}, before, h("span", { class: "ans" }, right.main), right.rest)); })(),
+           h("span", { class: "pair" }, "내가 고른 답: ", h("b", {}, wd(fills[i])), "  →  맞는 어휘: ", h("b", { class: "ok" }, wd(no)))]));
       list.append(li);
     });
     const full = fills.every(f => f != null), last = bi === banks.length - 1;
