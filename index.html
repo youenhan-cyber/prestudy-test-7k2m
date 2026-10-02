@@ -139,7 +139,7 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--ink)}
 .chip.dragging,.blank.dragging{opacity:.35}
 .blank.over{outline:3px dashed var(--grid);outline-offset:2px}
 .bank.over{background:var(--grid-soft)}
-.ghost{position:fixed;left:0;top:0;pointer-events:none;z-index:50;padding:9px 16px;border-radius:999px;
+.dragghost{position:fixed;left:0;top:0;pointer-events:none;z-index:50;padding:9px 16px;border-radius:999px;
   background:var(--ink);color:var(--paper);font-weight:600;font-size:1.05rem;box-shadow:0 6px 18px rgba(0,0,0,.25);
   transform:translate(-50%,-130%)}
 .sents li .n{display:inline-grid;place-items:center;min-width:1.9em;height:1.9em;position:relative;margin-right:4px}
@@ -199,6 +199,18 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--ink)}
 .answer .ans{display:inline-block;padding:0 10px;border:2px solid var(--ok);border-radius:6px;background:var(--surface);color:var(--ok);font-weight:700;line-height:1.7}
 .sents li .pair{display:block;margin-top:8px;font-size:.92rem;line-height:1.5;color:var(--muted)}
 .sents li .pair b{color:var(--grid);font-weight:600}.sents li .pair b.ok{color:var(--ok)}
+.dayhead{display:flex;align-items:baseline;gap:10px;padding:10px 14px 2px}.dayhead b{font-size:1.15rem}.dayhead small{color:var(--muted);font-size:.9rem}
+.dayrow .day{padding:10px 14px}.dayrow .day + .day{border-top:1px solid var(--line)}
+.dayrow .day span small{display:inline;margin-left:8px;color:var(--muted);font-size:.85rem}
+.exhead{position:sticky;top:env(safe-area-inset-top,0px);z-index:3;background:var(--paper);padding:6px 0 10px;border-bottom:2px solid var(--line)}
+.exrow{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.92rem;color:var(--muted)}
+.exrow b{color:var(--ink)}
+.extimer{font-family:"Gowun Batang",serif;font-weight:700;font-size:1.6rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.extimer.low{color:var(--grid)}
+.opt[aria-pressed="true"]{border-color:var(--ink);background:var(--sel);font-weight:600}
+.exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px;margin-top:14px}
+.excell{font:inherit;padding:10px 0;border:2px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);cursor:pointer}
+.excell.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
 pre.out{white-space:pre-wrap;word-break:break-word;font:inherit;font-size:.92rem;background:var(--surface);
   border:1px dashed var(--line);border-radius:10px;padding:14px;margin:14px 0 0;user-select:text;-webkit-user-select:text}
 .copied{color:var(--ok);font-weight:600;margin:10px 0 0;min-height:1.4em}.copied.fail{color:var(--grid)}
@@ -215,7 +227,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font:inherit;font-size:.92rem
    비워 두면 시트로 보내지 않고, 휴대폰 저장 + 결과 복사만 작동해요.
    ================================================================= */
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbzxBY69jTxPYHJR32iAoBHCIO2LRLFTD9vl-dhe9fuKA1-6SQLD7fWPKbE9J5eX_WTU4Q/exec";
-const APP_VERSION = "2026-09-29 s4";
+const APP_VERSION = "2026-10-02 s5b";
 
 /* =================================================================
    ✏️ 과 데이터 — 새 과를 추가할 때는 LESSONS 에 하나를 더 넣으면 됩니다.
@@ -612,6 +624,7 @@ function screen(...kids) { app.innerHTML = ""; kids.flat().forEach(k => k && app
    시작 화면
    ================================================================= */
 function renderStart() {
+  if (examActive()) { E = examActive(); return renderExam(); }   // 시험 중이면 시험 화면으로
   R = null; KEY = null;
   const saved = store.get("prestudy:v3:last") || {};
   const nameIn = h("input", { type: "text", id: "name", autocomplete: "off", autocapitalize: "characters", spellcheck: "false", placeholder: "예: 4A-01", inputmode: "text" });
@@ -634,14 +647,31 @@ function renderStart() {
         st = sent ? "완료 ✓" : "완료 · 제출 안 됨"; done = sent;
       }
       else if (rec) st = `이어서 · CYCLE ${rec.cycle + 1}/${cycles}`;
+      // 시험 상태 (이 휴대폰 기록 기준)
+      const exDone = name ? store.get(examDoneKey(lesson.code, d.day, name)) : null;
+      const exAct = examActive();
+      let est = "시험 보기", edone = false;
+      if (exDone) { const f = exDone.firstLocal || {}; const sent = !SHEET_URL || exDone.sync.final === "ok"; est = `${f.score}/${f.total}` + (sent ? " ✓" : " · 제출 안 됨"); edone = sent; }
+      else if (exAct && exAct.lesson.code === lesson.code && exAct.day === d.day && exAct.student.id === name) est = "시험 중";
       days.append(h("div", { class: "dayrow" },
+        h("div", { class: "dayhead" }, h("b", {}, `DAY ${d.day}`), h("small", {}, `어휘 ${d.from}~${d.to}번`)),
         h("button", { type: "button", class: "day", onclick: () => go(lesson, d.day) },
-          h("span", {}, h("b", {}, `DAY ${d.day}`), h("small", {}, `어휘 ${d.from}~${d.to}번, 10개씩 ${cycles}번`)),
+          h("span", {}, "📘 예습", h("small", {}, `10개씩 ${cycles}번`)),
           h("span", { class: "st" + (done ? " done" : "") }, st)),
+        h("button", { type: "button", class: "day", onclick: () => openExam(lesson, d.day) },
+          h("span", {}, "📝 시험", h("small", {}, "수업 날 9시, 10분")),
+          h("span", { class: "st" + (edone ? " done" : "") }, est)),
         rec ? h("div", { class: "dayacts" },
           rec.completed ? h("button", { type: "button", class: "link strong", onclick: () => go(lesson, d.day, "vocab") }, "📒 나의 어휘장") : null,
           h("button", { type: "button", class: "link", onclick: () => reset(lesson, d.day) }, "처음부터 다시 하기")) : null));
     });
+  }
+  function openExam(lesson, day) {
+    const id = normName();
+    if (!id) { err.textContent = "학생 번호를 먼저 쓰세요."; nameIn.focus(); return; }
+    const done = store.get(examDoneKey(lesson.code, day, id));
+    if (done) { E = done; return renderExamDone(); }        // 이미 본 시험은 결과 보기
+    renderExamEntry({ id, lesson, day });
   }
   let busy = false;
   async function go(lesson, day, open) {
@@ -682,7 +712,7 @@ function renderStart() {
   function showWho() { const i = knownStudent(normName()); whoLine.textContent = i && i.name ? `${i.name} · ${i.cls}` : ""; }
   nameIn.addEventListener("input", () => { err.textContent = ""; showWho(); drawDays(); });
   sel.addEventListener("change", drawDays);
-  drawDays(); showWho();
+  drawDays(); showWho(); resendPendingExams();
 
   screen(
     h("div", { class: "cells", "aria-hidden": "true" }, h("span", { class: "cell" }, "예"), h("span", { class: "cell" }, "습")),
@@ -717,6 +747,7 @@ function newRecord(lesson, day, student) {
    화면 나누기
    ================================================================= */
 function render() {
+  if (examActive()) { E = examActive(); return renderExam(); }
   ensureCycle();
   switch (R.phase) {
     case "s1": return renderS1();
@@ -1047,7 +1078,7 @@ function renderBank(mode) {
       if (!drag || drag.el !== el) return;
       if (!drag.moved && drag.label != null && Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) > 8) {   // 빈 빈칸은 끌 수 없고 누르기만
         drag.moved = true;
-        drag.ghost = h("div", { class: "ghost" }, drag.label); document.body.append(drag.ghost);
+        drag.ghost = h("div", { class: "dragghost" }, drag.label); document.body.append(drag.ghost);
         el.classList.add("dragging");
       }
       if (!drag.moved) return;
@@ -1405,6 +1436,302 @@ function renderFinal() {
 }
 
 /* =================================================================
+   📝 시험 (5단계)
+   · 문제는 앱에 없고, 시험 코드를 넣으면 서버(시험문항 탭)에서 받아 옴
+   · 10분 타이머는 시작 시각 기준으로 계속 흐름 (앱을 닫았다 열어도 이어짐)
+   · 시험 중에는 시험 화면만 보임 (어휘장, 예습 화면 잠금)
+   · 점수는 서버가 다시 채점해서 저장, 1차 점수는 오답 재시험과 따로 기록
+   ================================================================= */
+const EXAM_SECONDS = 600;
+const EXAM_ACTIVE = "prestudy:v3:exam:active";
+const examDoneKey = (lesson, day, id) => `prestudy:v3:exam:done:${lesson}:${day}:${id}`;
+let E = null, examTimer = null, qShownAt = 0;
+const examActive = () => store.get(EXAM_ACTIVE);
+const saveExam = () => { if (E) store.set(EXAM_ACTIVE, E); };
+const mmss = s => { s = Math.max(0, Math.ceil(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+const remaining = () => EXAM_SECONDS - (Date.now() - E.startedAt) / 1000;
+
+/* ---------- 들어가기: 학생 번호 + 시험 코드 ---------- */
+function renderExamEntry(target) {
+  if (examActive()) { E = examActive(); return renderExam(); }
+  const { lesson, day } = target;
+  const idIn = h("input", { type: "text", id: "ex-id", autocomplete: "off", autocapitalize: "characters", spellcheck: "false", placeholder: "예: 4A-01" });
+  idIn.value = target.id || "";
+  const codeIn = h("input", { type: "text", id: "ex-code", autocomplete: "off", inputmode: "numeric", maxlength: "6", placeholder: "칠판의 숫자" });
+  const err = h("p", { class: "err", role: "alert" });
+  const btn = h("button", { type: "button", class: "btn", style: "margin-top:22px" }, "시험 시작");
+  const who = h("p", { class: "hint", style: "margin-top:6px" });
+  const showWho = () => { const i = knownStudent(normId(idIn.value)); who.textContent = i && i.name ? `${i.name} · ${i.cls}` : ""; };
+  idIn.addEventListener("input", showWho); showWho();
+
+  btn.addEventListener("click", async () => {
+    const id = normId(idIn.value), code = codeIn.value.trim();
+    if (!id) { err.textContent = "학생 번호를 쓰세요."; return; }
+    if (!code) { err.textContent = "시험 코드를 쓰세요."; return; }
+    if (!SHEET_URL) { err.textContent = "시험은 학교에서 받은 링크에서만 볼 수 있어요."; return; }
+    btn.disabled = true; btn.textContent = "시험을 준비하고 있어요…"; err.textContent = "";
+    try {
+      const r = await callSheet("POST", null, { action: "exam_start", student_id: id, code, lesson_code: lesson.code, day, app_version: APP_VERSION });
+      if (!r.ok) {
+        btn.disabled = false; btn.textContent = "시험 시작";
+        err.textContent = ({
+          bad_code: "시험 코드가 맞지 않아요. 칠판의 코드를 다시 확인하세요.",
+          not_found: "명단에 없는 번호예요. 선생님께 확인하세요.",
+          wrong_class: "우리 반 시험 코드가 아니에요. 칠판의 코드를 다시 확인하세요.",
+          wrong_day: `이 코드는 ${(r.lesson_title || "").split(" ")[0]} DAY ${r.day} 시험 코드예요. 오늘 시험 DAY를 다시 확인하세요.`,
+          no_items: "이 시험의 문제가 아직 준비되지 않았어요. 선생님께 알려 주세요.",
+          already_taken: `이미 본 시험이에요. (1차 ${r.score}/${r.total}) 다시 보려면 선생님께 말씀하세요.`
+        })[r.error] || "시험을 시작하지 못했어요. 다시 눌러 보세요.";
+        return;
+      }
+      rememberStudent(r.student.id, { name: r.student.name, cls: r.student.cls });
+      store.set("prestudy:v3:last", { ...(store.get("prestudy:v3:last") || {}), id: r.student.id });
+      E = newExam(r); saveExam(); renderExam();
+    } catch (e) {
+      btn.disabled = false; btn.textContent = "시험 시작";
+      err.textContent = "인터넷 연결을 확인하고 다시 눌러 주세요.";
+    }
+  });
+
+  screen(
+    h("button", { type: "button", class: "link", onclick: renderStart }, "← 처음 화면"),
+    h("h2", { style: "margin-top:8px" }, `📝 ${lesson.title.split(" ")[0]} DAY ${day} 시험`),
+    h("p", { class: "muted" }, "선생님이 알려 준 시험 코드를 넣으면 시작해요. 시간은 10분이에요."),
+    h("label", { class: "f", for: "ex-id" }, "학생 번호"), idIn, who,
+    h("label", { class: "f", for: "ex-code" }, "시험 코드"), codeIn,
+    err, btn,
+    h("p", { class: "hint" }, "시작하면 10분이 지나거나 제출할 때까지 다른 화면으로 갈 수 없어요.")
+  );
+}
+
+function newExam(r) {
+  const items = r.items.map(it => ({ ...it, opts: shuffle([it.answer, ...it.wrong]), ropts: shuffle([it.retry.answer, ...it.retry.wrong]) }));
+  return {
+    id: r.session_id, startedAt: Date.now(), serverStart: r.started_at, regular: r.regular,
+    student: r.student, lesson: { code: r.lesson_code, title: r.lesson_title }, day: r.day,
+    items: shuffle(items),                        // 학생마다 문제 순서도 섞음
+    phase: "q", idx: 0, picks: {}, secs: {},
+    wrong: [], ridx: 0, rpicks: {}, rsecs: {},
+    firstAt: null, firstLocal: null, result: null, autoEnd: false,
+    sync: { first: null, final: null }
+  };
+}
+
+/* ---------- 타이머 ---------- */
+function tick() {
+  if (!E || E.phase === "done") { clearInterval(examTimer); examTimer = null; return; }
+  const el = document.getElementById("ex-timer");
+  const left = remaining();
+  if (el) { el.textContent = mmss(left); el.classList.toggle("low", left <= 60); }
+  if (left <= 0) timeUp();
+}
+function startTimer() { if (!examTimer) examTimer = setInterval(tick, 500); }
+function noteTime() {                                 // 지금 보던 문제에 머문 시간 더하기
+  if (!E || !qShownAt) return;
+  const sec = (Date.now() - qShownAt) / 1000; qShownAt = 0;
+  if (E.phase === "q") { const no = E.items[E.idx].no; E.secs[no] = (E.secs[no] || 0) + sec; }
+  if (E.phase === "r") { const no = E.wrong[E.ridx]; E.rsecs[no] = (E.rsecs[no] || 0) + sec; }
+}
+async function timeUp() {
+  if (!E || E.phase === "done") return;
+  noteTime(); E.autoEnd = true;
+  if (E.phase === "q") gradeFirst();
+  await finishExam();
+}
+
+/* ---------- 화면 나누기 ---------- */
+function renderExam() {
+  if (!E) return renderStart();
+  if (E.phase !== "done" && remaining() <= 0) { timeUp(); return; }
+  if (E.phase === "q") return renderExamQ("q");
+  if (E.phase === "firstdone") return renderFirstDone();
+  if (E.phase === "r") return renderExamQ("r");
+  if (E.phase === "done") return renderExamDone();
+}
+function examHead(label, done, total) {
+  return h("div", { class: "exhead" },
+    h("div", { class: "exrow" },
+      h("span", {}, h("b", {}, `📝 ${E.lesson.title.split(" ")[0]} DAY ${E.day}`), ` · ${label}`),
+      h("span", { class: "extimer", id: "ex-timer" }, mmss(remaining()))),
+    h("div", { class: "bar", "aria-hidden": "true" }, h("i", { style: `width:${Math.round(done / total * 100)}%` })),
+    h("p", { class: "muted small", style: "margin:6px 0 0" }, `답한 문제 ${done} / ${total}`));
+}
+
+/* ---------- 문제 화면 (1차, 재시험 같이 씀) ---------- */
+function renderExamQ(mode) {
+  const isR = mode === "r";
+  const list = isR ? E.wrong.map(no => E.items.find(it => it.no === no)) : E.items;
+  const picks = isR ? E.rpicks : E.picks;
+  const i = isR ? E.ridx : E.idx, it = list[i];
+  const done = list.filter(x => picks[x.no] != null).length;
+  const prompt = isR ? it.retry.q : it.q, opts = isR ? it.ropts : it.opts;
+  const isCtx = !isR && it.type === "문맥형";
+  const go = k => { noteTime(); if (isR) E.ridx = k; else E.idx = k; saveExam(); renderExamQ(mode); };
+
+  const box = h("div", { class: "opts", role: "group" });
+  opts.forEach((o, k) => box.append(h("button", {
+    type: "button", class: "opt", "aria-pressed": picks[it.no] === o ? "true" : "false",
+    onclick: () => {
+      picks[it.no] = o; saveExam();
+      for (const b of box.children) b.setAttribute("aria-pressed", b.textContent.slice(2) === o ? "true" : "false");
+      setTimeout(() => {                               // 다음 문제로 (모두 답했으면 목록으로)
+        if (!E || E.phase !== mode) return;
+        const next = list.findIndex((x, n) => n > i && picks[x.no] == null);
+        const any = list.findIndex(x => picks[x.no] == null);
+        if (next >= 0) go(next); else if (any >= 0) go(any); else { noteTime(); saveExam(); renderGrid(mode); }
+      }, 280);
+    }
+  }, `${["①", "②", "③"][k]} ${o}`)));
+
+  screen(
+    examHead(isR ? "오답 재시험" : "1차 시험", done, list.length),
+    h("p", { class: "qnum", style: "margin-top:18px" }, `${i + 1} / ${list.length}` + (isCtx ? " · 빈칸에 알맞은 말" : "")),
+    h("p", { class: "prompt" }, prompt),
+    h("p", { class: "muted small", style: "margin:-10px 0 16px" }, isCtx ? "빈칸에 들어갈 말을 고르세요." : "이 뜻에 맞는 어휘를 고르세요."),
+    box,
+    h("div", { class: "row", style: "margin-top:18px" },
+      h("button", { type: "button", class: "btn ghost", disabled: i === 0, onclick: () => go(i - 1) }, "← 이전"),
+      h("button", { type: "button", class: "btn ghost", onclick: () => { noteTime(); saveExam(); renderGrid(mode); } }, "문제 목록"),
+      h("button", { type: "button", class: "btn ghost", disabled: i === list.length - 1, onclick: () => go(i + 1) }, "다음 →"))
+  );
+  qShownAt = Date.now(); startTimer(); tick();
+}
+
+/* ---------- 문제 목록 + 제출 ---------- */
+function renderGrid(mode) {
+  const isR = mode === "r";
+  const list = isR ? E.wrong.map(no => E.items.find(it => it.no === no)) : E.items;
+  const picks = isR ? E.rpicks : E.picks;
+  const left = list.filter(x => picks[x.no] == null).length;
+  const grid = h("div", { class: "exgrid" }, list.map((x, k) => h("button", {
+    type: "button", class: "excell" + (picks[x.no] != null ? " on" : ""),
+    onclick: () => { if (isR) E.ridx = k; else E.idx = k; saveExam(); renderExamQ(mode); }
+  }, String(k + 1))));
+  const submit = h("button", { type: "button", class: "btn", style: "margin-top:20px", onclick: async () => {
+    if (left && !confirm(`아직 답하지 않은 문제가 ${left}개 있어요. 그래도 제출할까요?`)) return;
+    if (isR) { await finishExam(); } else { gradeFirst(); saveExam(); sendExam("first"); renderExam(); }
+  } }, isR ? "재시험 제출" : "1차 제출");
+  screen(
+    examHead(isR ? "오답 재시험" : "1차 시험", list.length - left, list.length),
+    h("p", { class: "muted", style: "margin-top:16px" }, left ? `답하지 않은 문제가 ${left}개 있어요. 번호를 누르면 그 문제로 가요.` : "모든 문제에 답했어요. 제출 전에 다시 볼 수 있어요."),
+    grid, submit
+  );
+  startTimer(); tick();
+}
+
+/* ---------- 채점 ---------- */
+function gradeFirst() {
+  E.wrong = E.items.filter(it => E.picks[it.no] !== it.answer).map(it => it.no);
+  E.firstLocal = { score: E.items.length - E.wrong.length, total: E.items.length };
+  E.firstAt = Date.now(); E.phase = "firstdone"; E.ridx = 0;
+}
+function renderFirstDone() {
+  const f = E.firstLocal, left = remaining();
+  if (!E.wrong.length) return finishExam();
+  screen(
+    examHead("1차 제출 완료", f.total, f.total),
+    h("h2", { style: "margin-top:20px" }, "1차 시험 결과"),
+    h("p", { class: "big" }, `${f.score}/${f.total}`),
+    h("p", { class: "muted" }, `1차 제출까지 ${mmss((E.firstAt - E.startedAt) / 1000)} · 남은 시간 ${mmss(left)}`),
+    h("p", { style: "margin-top:16px" }, `틀린 문제 ${E.wrong.length}개를 남은 시간 동안 다시 풀 수 있어요. 문제와 보기가 조금 바뀌어요.`),
+    h("p", { class: "muted small" }, "다시 풀어서 맞혀도 1차 점수는 바뀌지 않아요."),
+    h("button", { type: "button", class: "btn", style: "margin-top:18px", onclick: () => { E.phase = "r"; E.ridx = 0; saveExam(); renderExam(); } }, `오답 ${E.wrong.length}개 다시 풀기`),
+    h("button", { type: "button", class: "btn ghost", onclick: () => { if (confirm("시험을 끝낼까요? 끝내면 다시 풀 수 없어요.")) finishExam(); } }, "시험 끝내기")
+  );
+  startTimer(); tick();
+}
+
+/* ---------- 마무리 + 전송 ---------- */
+function examPayload(stage, ex) {
+  const E = ex;
+  const pickList = (order, picks, secs) => order.map(no => ({ no, pick: picks[no] == null ? "" : picks[no], sec: Math.round((secs[no] || 0) * 10) / 10 }));
+  return { action: "exam_submit", session_id: E.id, stage, auto_end: E.autoEnd, app_version: APP_VERSION,
+           first: pickList(E.items.map(it => it.no), E.picks, E.secs),
+           retry: stage === "final" ? pickList(E.wrong, E.rpicks, E.rsecs) : [] };
+}
+async function sendExam(stage, exArg) {
+  const ex = exArg || E; if (!ex) return;
+  ex.sync[stage] = "sending"; store.set(ex.phase === "done" ? examDoneKey(ex.lesson.code, ex.day, ex.student.id) : EXAM_ACTIVE, ex);
+  try {
+    const r = await callSheet("POST", null, examPayload(stage, ex));
+    ex.sync[stage] = r && r.ok ? "ok" : "fail";
+    if (r && r.ok && stage === "final") ex.result = r;
+  } catch (e) { ex.sync[stage] = "fail"; }
+  store.set(ex.phase === "done" ? examDoneKey(ex.lesson.code, ex.day, ex.student.id) : EXAM_ACTIVE, ex);
+  if (E === ex && ex.phase === "done") { const b = document.getElementById("ex-sync"); if (b) b.replaceWith(examSyncBox()); }
+}
+async function finishExam() {
+  if (!E || E.phase === "done") return;
+  noteTime();
+  if (E.phase === "q") gradeFirst();
+  E.phase = "done"; E.endedAt = Date.now();
+  clearInterval(examTimer); examTimer = null;
+  store.set(examDoneKey(E.lesson.code, E.day, E.student.id), E);
+  store.del(EXAM_ACTIVE);                              // 잠금 풀기
+  renderExamDone();
+  await sendExam("final");
+}
+/* 보내지 못한 시험 결과가 있으면 앱을 열 때 다시 보내기 */
+function resendPendingExams() {
+  if (!SHEET_URL) return;
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k || !k.startsWith("prestudy:v3:exam:done:")) continue;
+      const ex = store.get(k);
+      if (ex && ex.sync && ex.sync.final !== "ok" && ex.sync.final !== "sending") sendExam("final", ex);
+    }
+  } catch (e) {}
+}
+function examSyncBox() {
+  const st = E.sync.final;
+  const box = h("div", { id: "ex-sync", class: "sync " + (st === "ok" ? "ok" : st === "fail" ? "fail" : "wait"), role: "status" });
+  if (st === "ok") box.append(h("b", {}, "✅ 시험 결과가 제출되었습니다."));
+  else if (st === "fail") box.append(h("b", {}, "⚠️ 결과를 보내지 못했어요."), h("span", {}, "인터넷 연결을 확인하고 다시 제출하세요. 결과는 이 휴대폰에 저장되어 있어요."),
+    h("button", { type: "button", class: "btn", style: "margin-top:10px", onclick: () => sendExam("final") }, "다시 제출"));
+  else box.append(h("b", {}, "⏳ 결과를 보내고 있어요…"));
+  return box;
+}
+function renderExamDone() {
+  const f = E.firstLocal || { score: 0, total: E.items.length };
+  const rOk = E.wrong.filter(no => { const it = E.items.find(x => x.no === no); return E.rpicks[no] === it.retry.answer; }).length;
+  const unresolved = E.wrong.filter(no => { const it = E.items.find(x => x.no === no); return E.rpicks[no] !== it.retry.answer; });
+  const tried = Object.keys(E.rpicks).length > 0;
+  const firstWrongItems = E.wrong.map(no => E.items.find(x => x.no === no));
+  const text = [
+    `📝 ${E.lesson.title.split(" ")[0]} DAY ${E.day} 시험 | ${E.student.name || ""} (${E.student.id})`,
+    `1차 ${f.score}/${f.total}`,
+    E.wrong.length ? `오답 재시험 ${tried ? rOk : 0}/${E.wrong.length}` : "오답 없음",
+    unresolved.length ? `미해결: ${unresolved.map(no => E.items.find(x => x.no === no).word).join(" · ")}` : "",
+    E.regular ? "" : "정규시간 외 응시",
+    E.autoEnd ? "10분 종료로 자동 제출" : "",
+    `시험 ID: ${E.id.slice(0, 8)}`
+  ].filter(Boolean).join("\n");
+  const msg = h("p", { class: "copied", role: "status" });
+  screen(
+    h("h2", {}, "📝 시험 완료"),
+    h("p", { class: "muted" }, `${E.lesson.title} / DAY ${E.day} · ${E.student.name || ""} (${E.student.id})`),
+    examSyncBox(),
+    h("div", { class: "stats" },
+      row("1차 점수", `${f.score}/${f.total}`),
+      row("오답 재시험", E.wrong.length ? `${tried ? rOk : 0}/${E.wrong.length}` : "없음"),
+      row("최종 미해결", `${unresolved.length}개`),
+      row("응시", E.regular ? "정규시간" : "정규시간 외")),
+    E.autoEnd ? h("p", { class: "muted small", style: "margin-top:8px" }, "10분이 끝나서 자동으로 제출됐어요.") : null,
+    firstWrongItems.length ? [h("p", { class: "kind" }, "1차에서 틀린 어휘"),
+      h("ul", { class: "journey" }, firstWrongItems.map(it => h("li", {},
+        h("b", {}, it.word), h("span", {}, `${it.q}`),
+        h("span", {}, `내 답: ${E.picks[it.no] || "(무응답)"} → 정답: ${it.answer}` + (unresolved.includes(it.no) ? "  · 아직 어려움" : "  · 재시험에서 해결")))))] : h("p", { class: "allok" }, "1차에서 모두 맞혔어요!"),
+    h("p", { class: "kind", style: "margin-top:24px" }, "결과 복사 (자동 제출이 안 될 때만)"),
+    h("button", { type: "button", class: "btn ghost", onclick: async () => {
+      const ok = await copyText(text); msg.className = "copied" + (ok ? "" : " fail");
+      msg.textContent = ok ? "복사했어요. 카카오톡에 붙여넣어 보내세요." : "아래 글을 길게 눌러 복사하세요.";
+    } }, "결과 복사"), msg, h("pre", { class: "out" }, text),
+    h("button", { type: "button", class: "btn", style: "margin-top:20px", onclick: () => { E = null; renderStart(); } }, "처음 화면으로")
+  );
+}
+
+/* =================================================================
    📒 나의 어휘장 — 예습을 끝낸 DAY에서만 열림
    · 점수, 퀴즈, 학습시간 없음 (R.completed 뒤라 학습시간 타이머가 멈춰 있음)
    · 기록(R)은 읽기만 하고 바꾸지 않음. 필터/가리기 설정만 따로 저장
@@ -1416,6 +1743,7 @@ const HIDE_FIELDS = [
   { key: "native", label: "내 나라 말 뜻 가리기" }
 ];
 function renderVocab(from) {
+  if (examActive()) { E = examActive(); return renderExam(); }   // 시험 중에는 잠금
   if (!R || !R.completed) return renderStart();          // 예습을 끝내야만 열림
   const prefs = store.get(VOCAB_PREFS) || {};
   let filter = prefs.filter || "all";
