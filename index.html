@@ -91,6 +91,7 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--ink)}
 .say{font:inherit;font-size:.88rem;cursor:pointer;border:1.5px solid var(--line);border-radius:999px;
   background:var(--surface);color:var(--ink);padding:5px 12px}
 .say[hidden]{display:none}
+[hidden]{display:none !important}   /* 숨긴 버튼이 빈 막대로 보이지 않게 */
 .desc{margin-top:16px;padding:14px 16px;border-left:4px solid var(--grid);background:var(--surface);border-radius:0 10px 10px 0}
 .desc .t{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:.88rem}
 .desc p{font-size:1.12rem;margin:6px 0 0}
@@ -227,7 +228,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font:inherit;font-size:.92rem
    비워 두면 시트로 보내지 않고, 휴대폰 저장 + 결과 복사만 작동해요.
    ================================================================= */
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbzxBY69jTxPYHJR32iAoBHCIO2LRLFTD9vl-dhe9fuKA1-6SQLD7fWPKbE9J5eX_WTU4Q/exec";
-const APP_VERSION = "2026-10-07 L3";
+const APP_VERSION = "2026-10-07 R1";
 
 /* =================================================================
    ✏️ 과 데이터 — 새 과를 추가할 때는 LESSONS 에 하나를 더 넣으면 됩니다.
@@ -1000,6 +1001,135 @@ const LESSONS = [{
 실력,실력 차이가 나다
 아깝다,일등을 놓치다
 `
+}, {
+  code: "R1",
+  title: "복습 1 (1~3과)",
+  noExam: true,                                   // 복습은 시험 없이 예습만
+  days: [{ day: 1, from: 1, to: 30 }],
+  review: `
+L1|손재주가 좋다
+L1|이해가 빠르다
+L1|설득력이 있다
+L1|책임감이 강하다
+L1|소질이 있다
+L1|적성에 맞다
+L1|진로를 정하다
+L1|전공을 살리다
+L1|예술적
+L1|실용적
+L1|사교적
+L1|적극적
+L1|긍정적
+L2|눈이 침침하다
+L2|목이 뻣뻣하다
+L2|목이 따끔거리다
+L2|속이 거북하다
+L2|가슴이 답답하다
+L2|막히다
+L2|붓다
+L2|쓰리다
+L2|가렵다
+L2|저리다
+L2|과로
+L2|과식
+L2|과음
+L2|과속
+L2|과소비
+L3|득점을 하다
+L3|승부가 나다
+L3|승부욕이 강하다
+L3|연장전을 하다
+L3|결승전에 진출하다
+L3|막상막하이다
+L3|정정당당하다
+L3|자신만만하다
+L3|아슬아슬하다
+L3|흥미진진하다
+L3|규칙을 지키다
+L3|반칙을 하다
+L3|경고를 받다
+L3|퇴장을 당하다
+`,
+  words: `
+1|실망하다|기대한 대로 되지 않아서 마음이 상하다
+2|거르다|식사 같은 것을 하지 않고 건너뛰다
+3|편식|좋아하는 음식만 골라 먹는 것
+4|잔소리|같은 말이나 꾸중을 듣기 싫을 만큼 자꾸 하는 것
+5|성인병|잘못된 생활 습관 때문에 어른에게 많이 생기는 병
+6|간섭하다|다른 사람의 일에 괜히 끼어들어 자기 생각대로 하라고 하다
+7|외식|집이 아닌 식당에서 사 먹는 것
+8|과체중|몸무게가 알맞은 정도보다 많이 나가는 것
+9|채용|회사가 사람을 뽑아서 일하게 하는 것
+10|직장인|회사 같은 직장에 다니며 일하는 사람
+11|경쟁|같은 목적을 두고 서로 이기려고 겨루는 것
+12|벗어나다|어떤 곳이나 상황에서 빠져나오다
+13|제공되다|필요한 것이 준비되어 주어지다
+14|옮기다|물건을 다른 곳으로 가져가거나 병을 다른 사람에게 전하게 하다
+15|포기하다|하려던 일을 도중에 그만두고 하지 않기로 하다
+16|공통점|여럿이 똑같이 가지고 있는 점
+17|열정|어떤 일에 대한 뜨겁고 강한 마음
+18|효과|어떤 방법이나 노력으로 나타나는 좋은 결과
+19|독특하다|다른 것과 달리 특별하다
+20|성분|음식이나 약 등을 이루고 있는 물질
+21|풍부하다|넉넉할 만큼 많다
+22|자극적이다|맛이나 느낌이 아주 강하다
+23|부작용|약이나 치료 때문에 원하지 않던 나쁜 증상이 생기는 것
+24|고려하다|어떤 일을 정하기 전에 여러 가지를 잘 생각하다
+25|의심하다|사실이 아니거나 문제가 있을지도 모른다고 생각하다
+26|불가능하다|할 수 없거나 될 수 없다
+27|우울하다|기분이 가라앉고 마음이 무겁다
+28|습관|오랫동안 되풀이해서 몸에 익은 행동
+29|선호하다|여럿 가운데 어떤 것을 더 좋아하다
+30|인정받다|능력이나 가치를 다른 사람에게 좋게 평가받다
+`,
+  sentences: `
+1|열심히 준비한 발표를 망쳐서 많이 ___-았/었어요.|기대했던 영화가 재미없어서 ___-(으)ㄴ 표정으로 극장을 나왔어요.
+2|늦잠을 자서 아침을 ___-았/었어요.|바쁘다고 점심을 자주 ___-(으)면 건강이 나빠져요.
+3|우리 아이는 ___이/가 심해서 채소를 하나도 안 먹어요.|___을/를 고치려고 매일 싫어하는 채소를 한 가지씩 먹어요.
+4|엄마가 방 청소를 하라고 매일 ___을/를 하세요.|___이/가 듣기 싫어서 방에 들어가 문을 닫았어요.
+5|짜고 기름진 음식을 많이 먹으면 ___에 걸리기 쉬워요.|고혈압 같은 ___은/는 생활 습관과 관계가 깊어요.
+6|형은 제가 무슨 옷을 입는지까지 ___-아/어서 귀찮아요.|친구의 연애에 너무 ___-지 마세요.
+7|주말에 가족과 함께 ___을/를 하러 갔어요.|요즘 ___을/를 너무 자주 해서 돈을 많이 썼어요.
+8|의사 선생님이 저는 ___(이)라서 운동을 해야 한다고 하셨어요.|___이면 식사와 운동을 관리하는 것이 좋아요.
+9|그 회사는 올해 신입 사원 ___을/를 늘린대요.|이번 ___ 공고를 보고 바로 지원했어요.
+10|출근 시간에는 지하철에 ___이/가 많아요.|점심시간이 되면 회사 근처 식당이 ___들로 가득해요.
+11|이 대학은 들어가려는 학생이 많아서 ___이/가 심해요.|두 회사가 서로 더 싼 가격을 내놓으며 ___하고 있어요.
+12|주말에는 복잡한 도시를 ___-아/어 조용한 시골에서 쉬고 싶어요.|어려운 상황에서 빨리 ___-(으)면 좋겠어요.
+13|이 호텔에서는 아침 식사가 무료로 ___-아요/어요.|도서관에서는 학생들에게 무료 와이파이가 ___-고 있어요.
+14|무거운 책상을 혼자 ___-기 힘들어서 친구를 불렀어요.|감기를 다른 사람에게 ___-지 않도록 마스크를 쓰세요.
+15|시험이 어려워도 중간에 ___-지 마세요.|돈이 부족해서 이번 여행은 ___-았/었어요.
+16|저와 제 친구는 둘 다 운동을 좋아한다는 ___이/가 있어요.|두 나라의 음식 문화에서 ___을/를 찾아보세요.
+17|그 선생님은 가르치는 일에 ___이/가 넘쳐요.|나이가 많아도 ___이/가 있으면 무엇이든 새로 시작할 수 있어요.
+18|이 약을 먹었더니 ___이/가 금방 나타났어요.|매일 조금씩 복습하면 학습 ___이/가 좋아요.
+19|그 가게는 인테리어가 ___-아/어서 사람들이 사진을 많이 찍어요.|이 음식은 맛이 ___-아/어서 처음에는 낯설었어요.
+20|화장품을 사기 전에 ___을/를 꼭 확인해요.|이 약에는 졸음이 오게 하는 ___이/가 들어 있어요.
+21|과일에는 비타민이 ___-아요/어요.|그 선생님은 경험이 ___-아/어서 학생들의 마음을 잘 알아요.
+22|매운 떡볶이처럼 ___-(으)ㄴ 음식을 먹으면 속이 쓰려요.|아이들에게 너무 ___-(으)ㄴ 영화를 보여 주지 마세요.
+23|이 약을 먹은 뒤로 너무 졸린 ___이/가 생겼어요.|약을 너무 많이 먹으면 ___이/가 생길 수 있어요.
+24|집을 구할 때는 회사까지의 거리도 ___-아/어야 해요.|선생님은 학생들의 수준을 ___-아/어서 숙제를 내 주셨어요.
+25|친구가 거짓말을 하는 것 같아서 ___-기 시작했어요.|이상한 문자 메시지가 와서 사기가 아닌지 ___-았/었어요.
+26|하루에 책 열 권을 읽는 것은 ___-아요/어요.|처음에는 ___-(으)ㄴ 일처럼 보였지만 결국 해냈어요.
+27|비가 일주일 내내 오니까 기분이 ___-아요/어요.|___-(으)ㄹ 때는 좋아하는 음악을 들어요.
+28|자기 전에 휴대폰을 보는 ___을/를 고치고 싶어요.|아침마다 물을 한 잔 마시는 것은 좋은 ___이에요.
+29|저는 월급이 많은 회사보다 쉴 시간이 있는 회사를 더 ___-아요/어요.|손님들이 가장 ___-는 메뉴는 김치찌개예요.
+30|그 선수는 실력을 ___-아/어서 국가 대표가 되었어요.|회사에서 일을 잘해서 상사에게 ___-았/었어요.
+`,
+  groups: `
+실망하다,우울하다,포기하다
+거르다,편식,외식,과체중,성인병
+잔소리,간섭하다
+채용,직장인,경쟁,인정받다,선호하다
+벗어나다,제공되다,옮기다
+공통점,열정,효과,성분,습관,부작용
+독특하다,풍부하다,자극적이다,불가능하다
+고려하다,의심하다
+`,
+  conflicts: `
+편식,외식
+실망하다,우울하다
+효과,부작용
+성분,부작용
+`
 }];
 /* ================================================================= */
 
@@ -1041,7 +1171,13 @@ function prepare(L) {
   const byWord = {}; Object.values(W).forEach(w => byWord[w.word] = w.no);
   const groups = lines(L.groups).map(l => l.split(",").map(s => byWord[s.trim()]).filter(Boolean));
   const conflicts = lines(L.conflicts).map(l => l.split(",").map(s => byWord[s.trim()]).filter(Boolean));
-  return { ...L, W, groups, conflicts, short: L.title.split(" ")[0] };
+  // 복습: 앞 과의 어휘와 뜻을 그대로 가져옴 (code|어휘)
+  const RV = L.review ? lines(L.review).map((l, i) => {
+    const [code, word] = l.split("|"), src = LESSONS.find(x => x.code === code);
+    const ln = lines(src.words).find(x => x.split("|")[1] === word) || "";
+    return { i, code, word, desc: ln.split("|")[2] || "", src: src.title.split(" ")[0] };
+  }) : null;
+  return { ...L, W, groups, conflicts, RV, short: L.title.split(" ")[0] };
 }
 const ADV = ["스스로", "결국", "더구나", "나도 모르게", "자꾸만", "툭하면", "오히려", "빙글빙글", "각종", "틀림없이", "당연히", "즉", "각각"];
 const posOf = w => ADV.includes(w) ? "adv" : w.endsWith("다") ? "pred" : w.endsWith("적") ? "jeok" : "noun";
@@ -1162,7 +1298,7 @@ function renderStart() {
         const sent = !SHEET_URL || (rec.sync && rec.sync.status === "ok");
         st = sent ? "완료 ✓" : "완료 · 제출 안 됨"; done = sent;
       }
-      else if (rec) st = `이어서 · CYCLE ${rec.cycle + 1}/${cycles}`;
+      else if (rec) st = rec.phase && rec.phase.startsWith("rv") ? "이어서 · 1부 복습" : `이어서 · CYCLE ${rec.cycle + 1}/${cycles}`;
       // 시험 상태 (이 휴대폰 기록 기준)
       const exDone = name ? store.get(examDoneKey(lesson.code, d.day, name)) : null;
       const exAct = examActive();
@@ -1170,10 +1306,12 @@ function renderStart() {
       if (exDone) { const f = exDone.firstLocal || {}; const sent = !SHEET_URL || exDone.sync.final === "ok"; est = `${f.score}/${f.total}` + (sent ? " ✓" : " · 제출 안 됨"); edone = sent; }
       else if (exAct && exAct.lesson.code === lesson.code && exAct.day === d.day && exAct.student.id === name) est = "시험 중";
       days.append(h("div", { class: "dayrow" },
-        h("div", { class: "dayhead" }, h("b", {}, `DAY ${d.day}`), h("small", {}, `어휘 ${d.from}~${d.to}번`)),
+        h("div", { class: "dayhead" }, h("b", {}, lesson.review ? "복습" : `DAY ${d.day}`),
+          h("small", {}, lesson.review ? `1~3과 복습 ${lines(lesson.review).length}개 + 새 어휘 ${d.to - d.from + 1}개` : `어휘 ${d.from}~${d.to}번`)),
         h("button", { type: "button", class: "day", onclick: () => go(lesson, d.day) },
-          h("span", {}, "📘 예습", h("small", {}, `10개씩 ${cycles}번`)),
+          h("span", {}, "📘 예습", h("small", {}, lesson.review ? `빨리 풀기 + 10개씩 ${cycles}번` : `10개씩 ${cycles}번`)),
           h("span", { class: "st" + (done ? " done" : "") }, st)),
+        lesson.noExam ? h("p", { class: "hint", style: "margin:6px 2px 0" }, "복습은 시험이 없어요. 예습만 하면 돼요.") :
         h("button", { type: "button", class: "day", onclick: () => openExam(lesson, d.day) },
           h("span", {}, "📝 시험", h("small", {}, "수업 날 9시, 10분")),
           h("span", { class: "st" + (edone ? " done" : "") }, est)),
@@ -1249,7 +1387,8 @@ function newRecord(lesson, day, student) {
     day,
     startedAt: Date.now(), updatedAt: Date.now(), completedAt: null,
     activeSeconds: 0,
-    cycle: 0, phase: "s1",
+    cycle: 0, phase: lesson.review ? "rv" : "s1",
+    rv: lesson.review ? { queue: [], idx: 0, rqueue: [], ridx: 0, first: {}, retry: {} } : null,
     s1: { entries: {} },
     s2: { first: {}, retry: {} },
     s3: { first: {}, retry: {} },
@@ -1266,6 +1405,10 @@ function render() {
   if (examActive()) { E = examActive(); return renderExam(); }
   ensureCycle();
   switch (R.phase) {
+    case "rv": return renderRV("first");
+    case "rvsum": return renderRVSum();
+    case "rvr": return renderRV("retry");
+    case "rvrsum": return renderRVSum(true);
     case "s1": return renderS1();
     case "s2": return renderQ("first");
     case "s2sum": return renderS2Sum();
@@ -1279,6 +1422,72 @@ function render() {
   }
 }
 function to(phase) { R.phase = phase; save(); render(); }
+
+/* =================================================================
+   복습 1부 — 앞 과 어휘 빨리 풀기 (뜻 보고 3지선다, 틀린 것만 한 번 더)
+   ================================================================= */
+function rvOptions(i, avoid) {
+  const it = L.RV[i], same = L.RV.filter(x => x.i !== i && x.code === it.code);
+  let tries = 0, opts;
+  do {
+    let pick = shuffle(same.filter(x => posOf(x.word) === posOf(it.word))).slice(0, 2);
+    if (pick.length < 2) pick = pick.concat(shuffle(same.filter(x => !pick.includes(x)))).slice(0, 2);
+    opts = shuffle([i, ...pick.map(x => x.i)]); tries++;
+  } while (avoid && tries < 6 && avoid.slice().sort().join() === opts.slice().sort().join());
+  return opts;
+}
+const rvWrong = () => R.rv.queue.filter(q => !(R.rv.first[q.i] && R.rv.first[q.i].ok)).map(q => q.i);
+const rvStillWrong = () => R.rv.rqueue.filter(q => !(R.rv.retry[q.i] && R.rv.retry[q.i].ok)).map(q => q.i);
+function rvHead(label, cur, total) {
+  return h("div", { class: "head" },
+    h("div", { class: "cyc" }, h("span", {}, `${L.title}`), h("span", {}, "1부 복습 → 2부 새 어휘")),
+    h("div", { class: "label" }, h("span", {}, h("b", {}, label)), h("span", {}, `${cur} / ${total}`)),
+    h("div", { class: "bar", "aria-hidden": "true" }, h("i", { style: `width:${Math.round(cur / total * 100)}%` })));
+}
+function renderRV(mode) {
+  const isR = mode === "retry", S = R.rv;
+  if (!isR && !S.queue.length) { S.queue = shuffle(L.RV.map(x => x.i)).map(i => ({ i, options: rvOptions(i) })); save(); }
+  const queue = isR ? S.rqueue : S.queue, idx = isR ? S.ridx : S.idx, rec = isR ? S.retry : S.first;
+  const q = queue[idx], it = L.RV[q.i], answered = rec[q.i];
+  const fb = h("div", { class: "fb", role: "status" });
+  const next = h("button", { type: "button", class: "btn", hidden: true });
+  const opts = h("div", { class: "opts", role: "group" });
+  const last = idx === queue.length - 1;
+  const goNext = () => { if (last) to(isR ? "rvrsum" : "rvsum"); else { if (isR) S.ridx++; else S.idx++; save(); renderRV(mode); } };
+  function show(pick, auto) {
+    for (const b of opts.children) { b.disabled = true; const v = +b.dataset.i; if (v === q.i) b.classList.add("right"); else if (v === pick) b.classList.add("wrong"); }
+    const ok = pick === q.i;
+    fb.className = "fb " + (ok ? "ok" : "no"); fb.textContent = ok ? "맞아요!" : `정답은 '${it.word}'예요. (${it.src})`;
+    if (ok && auto) setTimeout(goNext, 450);             // 맞으면 바로 다음 문제
+    else { next.hidden = false; next.textContent = last ? "결과 보기" : "다음"; }
+  }
+  q.options.forEach((i, k) => opts.append(h("button", { type: "button", class: "opt", "data-i": i,
+    onclick: () => { if (rec[q.i]) return; rec[q.i] = { pick: i, ok: i === q.i, at: Date.now() }; save(); show(i, true); } },
+    `${["①", "②", "③"][k]} ${L.RV[i].word}`)));
+  next.addEventListener("click", goNext);
+  screen(rvHead(isR ? "1부 틀린 어휘 다시 풀기" : "1부 복습 빨리 풀기", idx + 1, queue.length),
+    h("p", { class: "muted small" }, idx === 0 && !isR ? "1~3과에서 배운 어휘예요. 뜻을 보고 빨리 골라 보세요." : "이 뜻에 맞는 어휘를 고르세요."),
+    h("p", { class: "prompt" }, it.desc), opts, fb, next);
+  if (answered) show(answered.pick, false);
+}
+function renderRVSum(afterRetry) {
+  const S = R.rv, total = S.queue.length, wrong = rvWrong();
+  const startRetry = () => { S.rqueue = shuffle(wrong).map(i => ({ i, options: rvOptions(i, (S.queue.find(q => q.i === i) || {}).options) })); S.ridx = 0; to("rvr"); };
+  const go2 = h("button", { type: "button", class: "btn", onclick: () => to("s1") }, "2부 새 어휘 시작 →");
+  const still = afterRetry ? rvStillWrong() : [];
+  screen(
+    h("div", { class: "cyc" }, h("span", {}, L.title), h("span", {}, "1부 결과")),
+    h("h2", { style: "margin-top:18px" }, afterRetry ? "1부 복습 끝!" : "1부 복습 결과"),
+    h("p", { class: "big" }, `${total - wrong.length}/${total}`),
+    !afterRetry && wrong.length
+      ? [h("p", { class: "muted", style: "margin-top:14px" }, `틀린 어휘 ${wrong.length}개`),
+         h("div", { class: "words" }, wrong.map(i => L.RV[i].word).join(" · ")),
+         h("button", { type: "button", class: "btn", style: "margin-top:16px", onclick: startRetry }, `틀린 ${wrong.length}개 다시 풀기`)]
+      : [afterRetry ? h("p", { class: "muted" }, still.length ? `아직 헷갈리는 어휘: ${still.map(i => L.RV[i].word).join(", ")} — 나의 어휘장에서 다시 보세요.` : "다시 푼 어휘를 모두 맞았어요!")
+                    : h("p", { class: "muted" }, "모두 맞았어요!"),
+         h("p", { class: "muted", style: "margin-top:14px" }, `이제 복습 단원에 새로 나온 어휘 ${dayNos().length}개를 10개씩 배워요.`), go2]
+  );
+}
 
 /* =================================================================
    1단계 — 어휘 이해하기 (사이클마다 10개)
@@ -1864,6 +2073,7 @@ function buildPayload() {
       s2_first: t.s2ok, s2_total: t.s2, s2_first_wrong: words(s2wrong), s2_retry_ok: t.s2rok, s2_retry_total: t.s2r, s2_unresolved: words(s2unres),
       s3_first: t.s3ok, s3_total: t.s3, s3_first_wrong: words(s3wrong), s3_retry_ok: t.s3rok, s3_retry_total: t.s3r, s3_unresolved: words(s3unres),
       yellow: words(rv.yellow), red: words(rv.red), minutes: minutes(),
+      review: R.rv ? { first_ok: R.rv.queue.length - rvWrong().length, total: R.rv.queue.length, retry_ok: R.rv.rqueue.length - rvStillWrong().length, retry_total: R.rv.rqueue.length, wrong: rvWrong().map(i => L.RV[i].word) } : undefined,
       cycles: R.cycles.map(cy => cy.summary && { ...cy.summary, yellow: words(cy.summary.yellow), red: words(cy.summary.red) })
     }
   };
@@ -1918,7 +2128,10 @@ function renderFinal() {
     h("p", { class: "muted" }, `학생: ${who()}`),
     syncBox(),
 
-    h("p", { class: "kind" }, "① 어휘 학습"),
+    R.rv ? [h("p", { class: "kind" }, "1부 복습 빨리 풀기"),
+      h("div", { class: "stats" }, row("1차", `${R.rv.queue.length - rvWrong().length}/${R.rv.queue.length}`),
+        row("다시 풀기", R.rv.rqueue.length ? `${R.rv.rqueue.length - rvStillWrong().length}/${R.rv.rqueue.length}` : "없음"))] : null,
+    h("p", { class: "kind" }, R.rv ? "① 새 어휘 학습" : "① 어휘 학습"),
     h("div", { class: "stats" },
       row("학습", `${t.native}/${t.n} 완료`),
       row(`${SELF.know.icon} ${SELF.know.short}`, `${t.know}`),
