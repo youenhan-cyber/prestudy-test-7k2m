@@ -6,7 +6,7 @@
 <title>4급 어휘 예습</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;600&family=Noto+Sans+Myanmar&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#F6F7F4; --surface:#FFFFFF; --ink:#1E2748; --muted:#5B6275;
@@ -36,7 +36,7 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 html,body{margin:0;min-height:100%}
 body{
   background:var(--paper);color:var(--ink);
-  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif,"Noto Sans Myanmar";
   font-size:17px;line-height:1.55;-webkit-text-size-adjust:100%;
 }
 #app{max-width:480px;margin:0 auto;padding:22px 20px 48px}
@@ -110,6 +110,11 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--ink)}
 /* 2단계 */
 .prompt{font-size:1.3rem;font-weight:600;line-height:1.55;margin:4px 0 20px}
 .opts{display:grid;gap:10px}
+.opt.dopt{font-size:1.02rem;line-height:1.45;padding:13px 16px}
+.native{margin:8px 0 2px;font-size:1.08rem;color:var(--muted)}
+.emo{font-size:2.6rem;line-height:1;margin-left:auto}
+.vemo{font-size:1.5rem;margin-left:6px}
+.langrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .opt{font:inherit;font-size:1.2rem;text-align:left;padding:16px 18px;border:2px solid var(--line);border-radius:10px;
   background:var(--surface);color:var(--ink);cursor:pointer}
 .opt:disabled{cursor:default}
@@ -228,7 +233,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font:inherit;font-size:.92rem
    비워 두면 시트로 보내지 않고, 휴대폰 저장 + 결과 복사만 작동해요.
    ================================================================= */
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbzxBY69jTxPYHJR32iAoBHCIO2LRLFTD9vl-dhe9fuKA1-6SQLD7fWPKbE9J5eX_WTU4Q/exec";
-const APP_VERSION = "2026-10-12 R8";
+const APP_VERSION = "2026-10-14 R9";
 
 /* =================================================================
    ✏️ 과 데이터 — 새 과를 추가할 때는 LESSONS 에 하나를 더 넣으면 됩니다.
@@ -5511,6 +5516,118 @@ L18|슬근슬근
 `
 }
 ];
+
+/* 번역: 과 코드 → `번호|English|Tiếng Việt|မြန်မာ|日本語|中文|Español|이모지` (1단계에서 학생이 고른 언어만 보여 줌, 이모지는 뜻이 눈에 보이는 어휘만) */
+const TRANS = {
+  L1: `
+1|ability|năng lực|စွမ်းရည်|能力|能力|capacidad|
+2|aptitude|năng khiếu, sự phù hợp|အရည်အချင်းနှင့် ကိုက်ညီမှု|適性|适合性，天赋所长|aptitud|
+3|natural talent|tố chất, năng khiếu bẩm sinh|မွေးရာပါ အရည်အချင်း|素質|天赋，素质|talento natural|
+4|career path, future direction|con đường tương lai (học tập, nghề nghiệp)|အနာဂတ် လမ်းကြောင်း (ပညာရေး၊ အလုပ်)|進路|前途，发展方向|camino futuro (estudios o trabajo)|🧭
+5|major (field of study)|chuyên ngành|အဓိကဘာသာ|専攻|专业|carrera, especialidad|🎓
+6|field, area|lĩnh vực|နယ်ပယ်|分野|领域|campo, área|
+7|strength, good point|ưu điểm|အားသာချက်|長所|优点|punto fuerte|👍
+8|skill with one's hands|sự khéo tay|လက်မှု ကျွမ်းကျင်မှု|手先の器用さ|手艺，手巧|habilidad manual|🛠️
+9|to be good with one's hands|khéo tay|လက်မှု ကောင်းသည်|手先が器用だ|手巧|ser hábil con las manos|🛠️
+10|persuasiveness|sức thuyết phục|ဆွဲဆောင်နိုင်စွမ်း|説得力|说服力|capacidad de persuasión|
+11|to be persuasive|có sức thuyết phục|ဆွဲဆောင်နိုင်စွမ်း ရှိသည်|説得力がある|有说服力|ser convincente|
+12|sense of responsibility|tinh thần trách nhiệm|တာဝန်သိစိတ်|責任感|责任感|sentido de la responsabilidad|
+13|to be very responsible|có tinh thần trách nhiệm cao|တာဝန်သိစိတ် ပြင်းထန်သည်|責任感が強い|责任感强|ser muy responsable|
+14|to understand quickly|hiểu nhanh|နားလည်မြန်သည်|理解が早い|理解得快|entender rápido|💡
+15|to have a talent for|có năng khiếu|မွေးရာပါ အရည်အချင်း ရှိသည်|素質がある|有天赋|tener talento para|
+16|to suit one's aptitude|phù hợp với năng khiếu|မိမိ အရည်အချင်းနှင့် ကိုက်ညီသည်|適性に合う|适合自己|ir bien con tus aptitudes|
+17|to decide one's career path|quyết định con đường tương lai|အနာဂတ် လမ်းကြောင်းကို ဆုံးဖြတ်သည်|進路を決める|决定前途方向|decidir tu futuro|
+18|to make use of one's major|tận dụng chuyên ngành|အဓိကဘာသာကို အလုပ်တွင် အသုံးချသည်|専攻を生かす|发挥专业所长|aprovechar tu carrera|
+19|artistic|mang tính nghệ thuật|အနုပညာဆန်သော|芸術的|艺术的|artístico|🎨
+20|practical|thiết thực, thực dụng|လက်တွေ့ကျသော|実用的|实用的|práctico|
+21|sociable|hòa đồng|ပေါင်းသင်းဆက်ဆံရေး ကောင်းသော|社交的|善于交际的|sociable|🤝
+22|active, proactive|tích cực, chủ động|တက်တက်ကြွကြွ ဦးဆောင်လုပ်သော|積極的|积极的，主动的|activo, con iniciativa|🙋
+23|positive|tích cực, lạc quan|အပြုသဘောဆောင်သော|前向き、肯定的|积极乐观的|positivo|😊
+24|lively, active|hoạt bát|တက်ကြွ ရွှင်လန်းသည်|活発だ|活泼|activo, alegre|
+25|sincere and hardworking|chăm chỉ, chân thành|ကြိုးစားပြီး ဖြောင့်မတ်သည်|誠実だ、まじめだ|诚实勤恳|trabajador y responsable|
+26|careful, meticulous|cẩn thận, tỉ mỉ|အသေးစိတ် ဂရုစိုက်သည်|几帳面だ|细心，仔细|meticuloso, cuidadoso|🔍
+27|sense of pitch, musical ear|cảm âm|အသံ ခံစားနိုင်စွမ်း|音感|乐感|oído musical|🎵
+28|to have an excellent musical ear|cảm âm rất tốt|အသံ ခံစားနိုင်စွမ်း ထူးချွန်သည်|音感が優れている|乐感出众|tener muy buen oído musical|🎵
+29|fashion sense|gu thời trang|ဖက်ရှင် အမြင်|ファッションセンス|时尚感|sentido de la moda|👗
+30|leadership|khả năng lãnh đạo|ခေါင်းဆောင်မှု|リーダーシップ|领导能力|liderazgo|
+31|interest|sự quan tâm, hứng thú|စိတ်ဝင်စားမှု|関心、興味|兴趣，关心|interés|
+32|to be interested in|quan tâm, có hứng thú|စိတ်ဝင်စားသည်|関心がある|感兴趣|estar interesado en|
+33|worry, concern|nỗi lo, sự trăn trở|စိတ်ပူပန်မှု|悩み|烦恼|preocupación|😟
+34|counseling, consultation|sự tư vấn|အကြံဉာဏ် ဆွေးနွေးခြင်း|相談|咨询，商谈|consulta, asesoramiento|💬
+35|advice|lời khuyên|အကြံဉာဏ်|助言、アドバイス|建议，忠告|consejo|
+36|to ask for advice|xin lời khuyên|အကြံဉာဏ် တောင်းသည်|助言を求める|征求意见|pedir consejo|
+37|to give advice|cho lời khuyên|အကြံဉာဏ် ပေးသည်|助言をする|给建议|dar consejos|
+38|to choose|lựa chọn|ရွေးချယ်သည်|選ぶ、選択する|选择|elegir|
+39|to solve|giải quyết|ဖြေရှင်းသည်|解決する|解决|resolver|
+40|to adapt|thích nghi|ပတ်ဝန်းကျင်နှင့် ကျင့်သားရလာသည်|適応する、慣れる|适应|adaptarse|
+41|to concentrate|tập trung|အာရုံစိုက်သည်|集中する|集中精神|concentrarse|🎯
+42|to manage to do, accomplish|làm được, hoàn thành|ခက်ခဲသော်လည်း အောင်မြင်အောင် လုပ်နိုင်သည်|やり遂げる|做成，完成|lograr hacerlo|💪
+43|to achieve|đạt được, thực hiện được|ပြည့်မီအောင် လုပ်သည်|成し遂げる、かなえる|实现|lograr, alcanzar|
+44|to make one's dream come true|thực hiện ước mơ|အိပ်မက်ကို အကောင်အထည်ဖော်သည်|夢をかなえる|实现梦想|cumplir un sueño|🌟
+45|to persuade|thuyết phục|ဖျောင်းဖျသည်|説得する|说服|convencer|
+46|to oppose|phản đối|ကန့်ကွက်သည်|反対する|反对|oponerse|🙅
+47|to praise|khen ngợi|ချီးကျူးသည်|褒める|称赞|elogiar|👏
+48|to recommend|giới thiệu, đề cử|အကြံပြု ထောက်ခံသည်|推薦する、勧める|推荐|recomendar|
+49|to get a job|xin được việc, đi làm|အလုပ်ရသည်|就職する|就业，找到工作|conseguir trabajo|💼
+50|getting a job, employment|việc làm|အလုပ်ရခြင်း|就職|就业|empleo|💼
+51|to go on to a higher school|học lên cao|အဆင့်မြင့် ကျောင်းသို့ ဆက်တက်သည်|進学する|升学|seguir estudiando en un nivel superior|🏫
+52|to be about to graduate|sắp tốt nghiệp|မကြာမီ ကျောင်းပြီးတော့မည်|卒業を控える|即将毕业|estar a punto de graduarse|🎓
+53|to pass (an exam)|đỗ, đậu|အောင်သည်|合格する|合格，考上|aprobar, ser admitido|🎉
+54|to fail (an exam)|trượt, rớt|ကျသည် (စာမေးပွဲ)|落ちる|落榜，没考上|suspender, no ser admitido|😢
+55|to be selected|được chọn|ရွေးချယ်ခံရသည်|選ばれる|被选上|ser elegido|🏅
+56|to work (at a company)|làm việc|အလုပ်လုပ်သည် (ကုမ္ပဏီ၊ ရုံး)|勤務する|工作，上班|trabajar (en una empresa)|🏢
+57|work, duties|công việc, nghiệp vụ|လုပ်ငန်းတာဝန်|業務|业务，工作|tareas del trabajo|📋
+58|grade (university)|điểm học phần|ဘာသာရပ် အမှတ် (တက္ကသိုလ်)|単位、成績|学分，成绩|nota (universidad)|
+59|lecture, class|bài giảng|ပို့ချချက်၊ စာသင်ချိန်|講義|讲课，课程|clase, conferencia|👨‍🏫
+60|application form for admission|đơn xin nhập học|ကျောင်းဝင် လျှောက်လွှာ|入学願書|入学申请书|solicitud de admisión|📝
+61|club activities|hoạt động câu lạc bộ|အသင်း လှုပ်ရှားမှု|サークル活動|社团活动|actividades de club|
+62|intern|thực tập sinh|အလုပ်သင် ဝန်ထမ်း|インターン社員|实习生|becario, practicante|
+63|expert|chuyên gia|ကျွမ်းကျင်သူ|専門家|专家|experto|
+64|to be related|liên quan|ဆက်စပ်သည်|関連する|相关|estar relacionado|🔗
+65|to plan|lên kế hoạch|စီစဉ်သည်|企画する|策划|planificar|🗂️
+66|travel package, tour|sản phẩm du lịch, tour|ခရီးစဉ် အစီအစဉ် (ရောင်းရန်)|旅行商品、ツアー|旅游产品|paquete turístico|🧳
+67|service industry|ngành dịch vụ|ဝန်ဆောင်မှု လုပ်ငန်း|サービス業|服务业|sector de servicios|🛎️
+68|airline|hãng hàng không|လေကြောင်းလိုင်း|航空会社|航空公司|aerolínea|✈️
+69|flight attendant, crew|tiếp viên|လေယာဉ်ဝန်ထမ်း|乗務員|乘务员|tripulante, azafata|
+70|passenger|hành khách|ခရီးသည်|乗客|乘客|pasajero|💺
+71|traveler|khách du lịch|ခရီးသွားသူ|旅行客|游客|viajero|🧳
+72|sense of reward, worth|cảm giác ý nghĩa, đáng làm|ကျေနပ် ဂုဏ်ယူမှု|やりがい|成就感，价值感|satisfacción (de algo que vale la pena)|
+73|to feel rewarded|cảm thấy ý nghĩa, đáng làm|ကျေနပ် ဂုဏ်ယူမှု ခံစားရသည်|やりがいを感じる|感到有意义|sentir que vale la pena|😌
+74|opportunity, chance|cơ hội|အခွင့်အရေး|機会、チャンス|机会|oportunidad|🍀
+75|to lack confidence|không tự tin|ယုံကြည်မှု မရှိ|自信がない|没有信心|no tener confianza|😰
+76|to succeed|thành công|အောင်မြင်သည်|成功する|成功|tener éxito|🏆
+77|to make an effort|cố gắng, nỗ lực|ကြိုးစားသည်|努力する|努力|esforzarse|💪
+78|to get used to|quen dần|ကျင့်သားရလာသည်|慣れる|习惯，熟悉起来|acostumbrarse|
+79|to take charge of|đảm nhận, phụ trách|တာဝန်ယူသည်|引き受ける、担当する|负责，承担|encargarse de|
+80|to quit|bỏ, thôi (việc)|ရပ်လိုက်သည်၊ နုတ်ထွက်သည်|やめる|辞掉，不再做|dejar, renunciar|
+81|to increase|tăng lên, làm tăng|တိုးသည်|増やす|增加|aumentar|📈
+82|to reduce|giảm, làm giảm|လျှော့သည်|減らす|减少|reducir|📉
+83|to be lacking, not enough|thiếu|မလုံလောက်ပါ|足りない、不足している|不足，不够|faltar, no ser suficiente|
+84|to be various|đa dạng|အမျိုးမျိုး ရှိသည်|多様だ、さまざまだ|多样|ser variado|🌈
+85|characteristic, feature|đặc điểm|ထူးခြားချက်|特徴|特征|característica|
+86|difference|điểm khác nhau|ကွာခြားချက်|違い、相違点|不同点|diferencia|
+87|by oneself|tự mình|ကိုယ်တိုင်|自分で、自ら|自己，独立地|por sí mismo|
+88|in the end, eventually|cuối cùng, rốt cuộc|နောက်ဆုံးတွင်|結局|最终，结果|al final|
+89|moreover, besides|hơn nữa|ထို့အပြင်|その上、しかも|而且，再加上|además|
+90|without realizing it|bất giác, vô thức|ကိုယ်တိုင် မသိလိုက်ဘဲ|思わず、知らないうちに|不知不觉地|sin darme cuenta|
+91|to go well together, get along|hợp nhau|လိုက်ဖက်သည်၊ အဆင်ပြေသည်|よく合う、よく似合う|很合适，合得来|combinar bien, llevarse bien|
+92|to be like-minded, get along|hợp ý nhau|စိတ်တူ ကိုယ်တူ ဖြစ်သည်|気が合う|合得来|tener afinidad|🤝
+93|courage|dũng khí, can đảm|သတ္တိ|勇気|勇气|valor, coraje|🦁
+94|to confess|thổ lộ, tỏ tình|ဖွင့်ပြောသည်၊ ဝန်ခံသည်|告白する|告白，表白|confesar, declararse|💌
+95|to be rejected|bị từ chối|ငြင်းပယ်ခံရသည်|断られる|被拒绝|ser rechazado|💔
+96|to be afraid|sợ, lo sợ|ကြောက်ရွံ့သည်|怖い、恐ろしい|害怕|tener miedo|😨
+97|bulletin board|bảng tin|သတင်းဘုတ်|掲示板|公告栏，留言板|tablón de anuncios|📌
+98|college life|đời sống đại học|တက္ကသိုလ် ဘဝ|大学生活|大学生活|vida universitaria|🏫
+99|to choose a job|chọn nghề|အလုပ်အကိုင် ရွေးချယ်သည်|職業を選ぶ|选择职业|elegir una profesión|
+100|job that suits one's aptitude|nghề phù hợp với năng khiếu|မိမိနှင့် ကိုက်ညီသော အလုပ်|適性に合う職業|适合自己的职业|trabajo que va contigo|
+`
+};
+const LANGS = [
+  { key: "en", label: "English" }, { key: "vi", label: "Tiếng Việt" }, { key: "my", label: "မြန်မာ" },
+  { key: "ja", label: "日本語" }, { key: "zh", label: "中文" }, { key: "es", label: "Español" }
+];
+const LANG_KEY = "prestudy:v3:lang";
+const myLang = () => store.get(LANG_KEY) || "";
 /* ================================================================= */
 
 const SELF = {
@@ -5553,6 +5670,7 @@ function prepare(L) {
   const W = {};
   lines(L.words).forEach(l => { const [no, word, desc] = l.split("|"); W[+no] = { no: +no, word, desc }; });
   lines(L.sentences).forEach(l => { const [no, a, b] = l.split("|"); if (W[+no]) W[+no].sent = [a, b]; });
+  lines(TRANS[L.code] || "").forEach(l => { const p = l.split("|"); if (W[+p[0]]) { W[+p[0]].tr = Object.fromEntries(LANGS.map((g, i) => [g.key, (p[i + 1] || "").trim()])); W[+p[0]].emo = (p[LANGS.length + 1] || "").trim(); } });
   const byWord = {}; Object.values(W).forEach(w => byWord[w.word] = w.no);
   const groups = lines(L.groups).map(l => l.split(",").map(s => byWord[s.trim()]).filter(Boolean));
   const conflicts = lines(L.conflicts).map(l => l.split(",").map(s => byWord[s.trim()]).filter(Boolean));
@@ -5710,6 +5828,9 @@ function renderStart() {
   const sel = h("select", { id: "lesson" }, LESSONS.map(l => h("option", { value: l.code }, l.title)));
   if (saved.lesson && LESSONS.some(l => l.code === saved.lesson)) sel.value = saved.lesson;
   const err = h("p", { class: "err", role: "alert" });
+  const langSel = h("select", { id: "lang" }, h("option", { value: "" }, "한국어만"), LANGS.map(g => h("option", { value: g.key }, g.label)));
+  langSel.value = myLang();
+  langSel.addEventListener("change", () => store.set(LANG_KEY, langSel.value));
   const days = h("div", { class: "days" });
   const normName = () => normId(nameIn.value);
 
@@ -5797,8 +5918,9 @@ function renderStart() {
   screen(
     h("div", { class: "cells", "aria-hidden": "true" }, h("span", { class: "cell" }, "예"), h("span", { class: "cell" }, "습")),
     h("h1", { style: "margin-top:20px" }, "어휘 예습"),
-    h("p", { class: "muted" }, "10개씩 배우고, 확인하고, 문장에 써 봐요. 이것을 5번 하면 끝나요. 30~40분쯤 걸려요."),
+    h("p", { class: "muted" }, "10개씩 뜻을 찾고, 확인하고, 문장에 써 봐요. 이것을 5번 하면 끝나요."),
     h("label", { class: "f", for: "name" }, "학생 번호"), nameIn, whoLine, err,
+    h("label", { class: "f", for: "lang", style: "margin-top:10px" }, "내 나라 말 (1단계에 같이 나와요)"), langSel,
     h("label", { class: "f", for: "lesson", style: "margin-top:10px" }, "과"), sel,
     h("label", { class: "f" }, "공부할 DAY"), days,
     h("p", { class: "hint" }, "중간에 닫아도 같은 휴대폰, 같은 브라우저에서 이어서 할 수 있어요.")
@@ -5815,7 +5937,7 @@ function newRecord(lesson, day, student) {
     activeSeconds: 0,
     cycle: 0, phase: lesson.review ? "rv" : "s1",
     rv: lesson.review ? { queue: [], idx: 0, rqueue: [], ridx: 0, first: {}, retry: {} } : null,
-    s1: { entries: {} },
+    s1: { entries: {}, first: {}, retry: {} },
     s2: { first: {}, retry: {} },
     s3: { first: {}, retry: {} },
     cycles: [],
@@ -5836,7 +5958,10 @@ function render() {
     case "rvsum": return renderRVSum();
     case "rvr": return renderRV("retry");
     case "rvrsum": return renderRVSum(true);
-    case "s1": return renderS1();
+    case "s1": return renderS1("first");
+    case "s1sum": return renderS1Sum();
+    case "s1r": return renderS1("retry");
+    case "s1rsum": return renderS1RSum();
     case "s2": return renderQ("first");
     case "s2sum": return renderS2Sum();
     case "s2r": return renderQ("retry");
@@ -5919,45 +6044,97 @@ function renderRVSum(afterRetry) {
 /* =================================================================
    1단계 — 어휘 이해하기 (사이클마다 10개)
    ================================================================= */
-function renderS1() {
-  const nos = cycleNos(), cy = C(), no = nos[cy.s1pos], w = L.W[no];
-  const e = R.s1.entries[no] || (R.s1.entries[no] = { native: "", self: null });
-  const input = h("input", { type: "text", id: "native", autocomplete: "off", placeholder: "Tiếng Việt / မြန်မာဘာသာ / 日本語 / 中文" });
-  input.value = e.native;
-  const hint = h("p", { class: "hint" });
-  const last = cy.s1pos === nos.length - 1;
-  const next = h("button", { type: "button", class: "btn" }, last ? "저장하고 2단계로 →" : "저장하고 다음 →");
-  const selfs = h("div", { class: "selfs", role: "group", "aria-label": "이 단어를 원래 알고 있었어요?" });
-
-  function refresh() {
-    const ok = e.native.trim() && e.self;
-    next.disabled = !ok;
-    hint.textContent = ok ? "" : !e.native.trim() && !e.self ? "뜻을 쓰고, 아래에서 하나를 고르세요." : !e.native.trim() ? "내 나라 말로 뜻을 쓰세요." : "하나를 고르세요.";
-    for (const b of selfs.children) b.setAttribute("aria-pressed", b.dataset.v === e.self ? "true" : "false");
+/* 1단계 — 단어(+내 나라 말 뜻) 보고 쉬운 한국어 뜻 고르기 (4지선다) → 틀린 것만 다시 */
+const trOf = no => { const t = L.W[no].tr, k = myLang(); return t && k && t[k] ? t[k] : ""; };
+function makeDescOptions(no, avoid) {
+  const near = new Set([...L.groups, ...L.conflicts].filter(g => g.includes(no)).flat());
+  const core = wd(no).replace(/다$/, "").split(" ")[0];   // 보기 뜻 안에 정답 단어가 보이면 헷갈리니까 빼기
+  const pool = dayNos().filter(x => x !== no && !near.has(x) && !(core.length > 1 && L.W[x].desc.includes(core)));
+  let tries = 0, opts;
+  do {
+    let pick = shuffle(pool.filter(x => posOf(wd(x)) === posOf(wd(no)))).slice(0, 3);
+    if (pick.length < 3) pick = pick.concat(shuffle(pool.filter(x => !pick.includes(x)))).slice(0, 3);
+    opts = shuffle([no, ...pick]); tries++;
+  } while (avoid && tries < 8 && opts.filter(x => x !== no).some(x => avoid.includes(x)));
+  return opts;
+}
+function s1State() {
+  const cy = C();
+  if (!cy.s1) cy.s1 = { queue: cycleNos().map(no => ({ no, options: makeDescOptions(no) })), idx: 0, rqueue: [], ridx: 0 };
+  if (!R.s1.first) { R.s1.first = {}; R.s1.retry = {}; }
+  return cy.s1;
+}
+function renderS1(mode) {
+  const isRetry = mode === "retry", S = s1State();
+  const queue = isRetry ? S.rqueue : S.queue, idx = isRetry ? S.ridx : S.idx;
+  const rec = isRetry ? R.s1.retry : R.s1.first;
+  const q = queue[idx], w = L.W[q.no], answered = rec[q.no], tr = trOf(q.no);
+  const fb = h("div", { class: "fb", role: "status" });
+  const next = h("button", { type: "button", class: "btn", hidden: !answered });
+  const opts = h("div", { class: "opts", role: "group" });
+  const marks = ["①", "②", "③", "④"];
+  function showResult(pickNo) {
+    for (const b of opts.children) {
+      b.disabled = true; const v = +b.dataset.no;
+      if (v === q.no) b.classList.add("right"); else if (v === pickNo) b.classList.add("wrong");
+    }
+    const ok = pickNo === q.no;
+    fb.className = "fb " + (ok ? "ok" : "no"); fb.innerHTML = "";
+    fb.append(ok ? "맞아요!" : "초록색이 정답이에요. 뜻을 한 번 더 읽어 보세요.");
+    next.hidden = false;
   }
-  Object.entries(SELF).forEach(([k, s]) => selfs.append(
-    h("button", { type: "button", class: "self", "data-v": k, onclick: () => { e.self = k; save(); refresh(); } }, `${s.icon} ${s.label}`)));
-  input.addEventListener("input", () => { e.native = input.value; save(); refresh(); });
+  q.options.forEach((no, i) => opts.append(h("button", {
+    type: "button", class: "opt dopt", "data-no": no,
+    onclick: () => { if (rec[q.no]) return; rec[q.no] = { pick: no, ok: no === q.no, at: Date.now() }; save(); showResult(no); next.focus(); }
+  }, `${marks[i]} ${L.W[no].desc}`)));
+  const last = idx === queue.length - 1;
+  next.textContent = last ? "결과 보기" : "다음";
   next.addEventListener("click", () => {
-    if (!e.native.trim() || !e.self) return;
-    e.native = e.native.trim();
-    if (!last) { cy.s1pos++; save(); renderS1(); } else startS2();
+    if (last) to(isRetry ? "s1rsum" : "s1sum");
+    else { if (isRetry) S.ridx++; else S.idx++; save(); renderS1(mode); }
   });
-  const back = h("button", { type: "button", class: "btn ghost back", disabled: cy.s1pos === 0, onclick: () => { cy.s1pos--; save(); renderS1(); } }, "← 이전");
-
   screen(
-    head("1단계 어휘 이해하기", cy.s1pos + 1, nos.length),
-    h("div", { class: "word" }, h("strong", {}, w.word), sayBtn("단어", w.word)),
-    h("div", { class: "desc" },
-      h("div", { class: "t" }, h("span", {}, "쉬운 한국어 뜻"), sayBtn("뜻", w.desc)),
-      h("p", {}, w.desc)),
-    h("div", { style: "margin-top:10px" }, sayBtn("단어 + 뜻 듣기", `${w.word}. ${w.desc}`)),
-    h("label", { class: "f", for: "native" }, "내 나라 말로 뜻을 써 보세요."), input,
-    h("label", { class: "f" }, "이 단어를 원래 알고 있었어요?"), selfs,
-    hint,
-    h("div", { class: "row", style: "margin-top:14px" }, back, next)
+    head(isRetry ? "1단계 틀린 뜻 다시 찾기" : "1단계 단어 보고 뜻 찾기", idx + 1, queue.length),
+    h("div", { class: "word" }, h("strong", {}, w.word), sayBtn("단어", w.word), w.emo ? h("span", { class: "emo", "aria-hidden": "true" }, w.emo) : null),
+    tr ? h("p", { class: "native" }, tr) : null,
+    h("p", { class: "muted small", style: "margin-top:12px" }, "이 단어의 쉬운 한국어 뜻을 고르세요."),
+    opts, fb,
+    answered ? h("div", { style: "margin-top:8px" }, sayBtn("단어 + 뜻 듣기", `${w.word}. ${w.desc}`)) : null,
+    next
   );
-  refresh();
+  if (answered) showResult(answered.pick);
+}
+const s1WrongOf = cy => (cy.s1 ? cy.s1.queue : []).filter(q => !(R.s1.first[q.no] && R.s1.first[q.no].ok)).map(q => q.no);
+const s1RetryWrongOf = cy => (cy.s1 ? cy.s1.rqueue : []).filter(q => !(R.s1.retry[q.no] && R.s1.retry[q.no].ok)).map(q => q.no);
+function renderS1Sum() {
+  const cy = C(), S = s1State(), total = S.queue.length, wrong = s1WrongOf(cy);
+  const startRetry = () => {
+    S.rqueue = shuffle(wrong).map(no => ({ no, options: makeDescOptions(no, (S.queue.find(q => q.no === no) || {}).options) }));
+    S.ridx = 0; to("s1r");
+  };
+  screen(
+    cycleStrip(),
+    h("h2", { style: "margin-top:18px" }, "1단계 결과"),
+    h("p", { class: "big" }, `${total - wrong.length}/${total}`),
+    wrong.length
+      ? [h("p", { class: "muted", style: "margin-top:14px" }, `틀린 어휘 ${wrong.length}개`),
+         h("div", { class: "words" }, wrong.map(wd).join(" · ")),
+         h("p", { class: "muted", style: "margin-top:18px" }, "틀린 어휘만 한 번 더 풀어요. 보기가 바뀌어요."),
+         h("button", { type: "button", class: "btn", onclick: startRetry }, `틀린 ${wrong.length}개 다시 풀기`)]
+      : [h("p", { class: "muted" }, "모두 맞았어요!"),
+         h("button", { type: "button", class: "btn", onclick: startS2 }, "2단계 시작")]
+  );
+}
+function renderS1RSum() {
+  const cy = C(), S = s1State(), still = s1RetryWrongOf(cy);
+  screen(
+    cycleStrip(),
+    h("h2", { style: "margin-top:18px" }, "1단계 다시 풀기 결과"),
+    h("p", { class: "big" }, `${S.rqueue.length - still.length}/${S.rqueue.length}`),
+    still.length ? [h("p", { class: "muted", style: "margin-top:14px" }, "아직 헷갈리는 어휘 (어휘장 맨 위에 나와요)"),
+                    h("div", { class: "words" }, still.map(no => `${wd(no)} — ${L.W[no].desc}`).join("\n"))] : h("p", { class: "muted" }, "모두 맞았어요!"),
+    h("button", { type: "button", class: "btn", style: "margin-top:18px", onclick: startS2 }, "2단계 시작")
+  );
 }
 
 /* =================================================================
@@ -6004,8 +6181,8 @@ function renderQ(mode) {
     const ok = pickNo === q.no;
     fb.className = "fb " + (ok ? "ok" : "no"); fb.innerHTML = "";
     fb.append(ok ? "맞아요!" : `정답은 '${w.word}'예요.`);
-    const memo = (R.s1.entries[q.no] || {}).native;
-    if (!ok && memo) fb.append(h("div", { class: "memo" }, `내가 쓴 뜻: ${memo}`));
+    const memo = trOf(q.no) || (R.s1.entries[q.no] || {}).native;
+    if (!ok && memo) fb.append(h("div", { class: "memo" }, memo));
     next.hidden = false;
   }
   q.options.forEach((no, i) => opts.append(h("button", {
@@ -6366,7 +6543,9 @@ function renderS3Sum() {
    어휘별 이력과 분류
    ================================================================= */
 function journey(no) {
-  const steps = [];
+  const steps = [], s1 = R.s1.first || {}, s1r = R.s1.retry || {};
+  if (s1[no]) steps.push({ label: "1단계", ok: s1[no].ok });
+  if (s1r[no]) steps.push({ label: "1단계 다시", ok: s1r[no].ok });
   if (R.s2.first[no]) steps.push({ label: "2단계", ok: R.s2.first[no].ok });
   if (R.s2.retry[no]) steps.push({ label: "2단계 다시", ok: R.s2.retry[no].ok });
   if (R.s3.first[no]) steps.push({ label: "3단계", ok: R.s3.first[no].ok });
@@ -6388,13 +6567,17 @@ function classify(nos) {
 
 /* 여러 사이클을 단계별로 합산 */
 function stageTotals(cycles) {
-  const t = { n: 0, native: 0, know: 0, seen: 0, new: 0,
+  const t = { n: 0, native: 0, know: 0, seen: 0, new: 0, s1: 0, s1ok: 0, s1r: 0, s1rok: 0,
               s2: 0, s2ok: 0, s2r: 0, s2rok: 0, s3: 0, s3ok: 0, s3r: 0, s3rok: 0 };
   cycles.forEach(cy => {
     cy.nos.forEach(no => {
       const e = R.s1.entries[no] || {};
       t.n++; if (e.native && e.native.trim()) t.native++; if (e.self) t[e.self]++;
     });
+    if (cy.s1) {
+      cy.s1.queue.forEach(q => { t.s1++; if (R.s1.first[q.no] && R.s1.first[q.no].ok) t.s1ok++; });
+      cy.s1.rqueue.forEach(q => { t.s1r++; if (R.s1.retry[q.no] && R.s1.retry[q.no].ok) t.s1rok++; });
+    }
     cy.s2.queue.forEach(q => { t.s2++; if (R.s2.first[q.no] && R.s2.first[q.no].ok) t.s2ok++; });
     cy.s2.rqueue.forEach(q => { t.s2r++; if (R.s2.retry[q.no] && R.s2.retry[q.no].ok) t.s2rok++; });
     cy.s3.targets.forEach(no => { t.s3++; if (R.s3.first[no] && R.s3.first[no].ok) t.s3ok++; });
@@ -6410,7 +6593,7 @@ function finishCycle() {
   const cy = C(), t = stageTotals([cy]), rv = classify(cy.nos);
   cy.summary = {                          // 교사용 대시보드를 위한 사이클별 기록
     cycle: R.cycle + 1, words: rangeText(cy.nos), finishedAt: Date.now(),
-    s1: { done: t.native, total: t.n, know: t.know, seen: t.seen, new: t.new },
+    s1: { done: t.native, total: t.n, know: t.know, seen: t.seen, new: t.new, first: t.s1ok, qs: t.s1, retry: t.s1rok, retryTotal: t.s1r },
     s2: { first: t.s2ok, total: t.s2, retry: t.s2rok, retryTotal: t.s2r },
     s3: { first: t.s3ok, total: t.s3, retry: t.s3rok, retryTotal: t.s3r },
     yellow: rv.yellow, red: rv.red
@@ -6425,7 +6608,7 @@ function renderCycleDone() {
     h("h2", {}, `🎉 CYCLE ${R.cycle + 1} 완료`),
     h("p", { class: "muted" }, `어휘 ${s.words} 학습 완료`),
     h("div", { class: "stats" },
-      h("div", {}, h("span", {}, "1단계"), h("b", {}, `${s.s1.done}/${s.s1.total} 완료`)),
+      h("div", {}, h("span", {}, "1단계"), h("b", {}, s.s1.qs ? `1차 ${s.s1.first}/${s.s1.qs}` + (s.s1.retryTotal ? `, 다시 ${s.s1.retry}/${s.s1.retryTotal}` : "") : `${s.s1.done}/${s.s1.total} 완료`)),
       h("div", {}, h("span", {}, "2단계"), h("b", {}, `1차 ${s.s2.first}/${s.s2.total}` + (s.s2.retryTotal ? `, 다시 ${s.s2.retry}/${s.s2.retryTotal}` : ""))),
       h("div", {}, h("span", {}, "3단계"), h("b", {}, `1차 ${s.s3.first}/${s.s3.total}` + (s.s3.retryTotal ? `, 다시 ${s.s3.retry}/${s.s3.retryTotal}` : "")))),
     again.length ? [h("p", { class: "muted", style: "margin-top:16px" }, "다시 볼 단어"), h("div", { class: "words" }, again.join("  "))]
@@ -6457,7 +6640,7 @@ function resultText() {
   const out = [
     `${L.short} DAY ${R.day} | ${who()}`,
     "",
-    `① 어휘학습 ${t.native}/${t.n} 완료`,
+    t.s1 ? `① 단어→뜻 1차 ${t.s1ok}/${t.s1}` + (t.s1r ? `, 다시 ${t.s1rok}/${t.s1r}` : "") : `① 어휘학습 ${t.native}/${t.n} 완료`,
     "",
     "② 뜻→어휘",
     `1차 ${t.s2ok}/${t.s2}`,
@@ -6507,7 +6690,8 @@ function buildPayload() {
     lesson_code: L.code, lesson_title: L.title, day: R.day,
     completed: true, completed_at: R.completedAt,
     summary: {                                   // 모국어 뜻은 보내지 않음 (휴대폰에만 보관)
-      s1_done: t.native, s1_total: t.n, know: t.know, seen: t.seen, new: t.new,
+      s1_done: t.s1 ? t.s1ok : t.native, s1_total: t.s1 || t.n,
+      know: t.s1 ? t.s1rok : t.know, seen: t.s1 ? t.s1r : t.seen, new: t.s1 ? "" : t.new,   // 새 1단계: 시트 '🟢' 칸 = 다시 풀기 정답, '🟡' 칸 = 다시 풀기 문항
       s2_first: t.s2ok, s2_total: t.s2, s2_first_wrong: words(s2wrong), s2_retry_ok: t.s2rok, s2_retry_total: t.s2r, s2_unresolved: words(s2unres),
       s3_first: t.s3ok, s3_total: t.s3, s3_first_wrong: words(s3wrong), s3_retry_ok: t.s3rok, s3_retry_total: t.s3r, s3_unresolved: words(s3unres),
       yellow: words(rv.yellow), red: words(rv.red), minutes: minutes(),
@@ -6919,7 +7103,7 @@ const VOCAB_PREFS = "prestudy:v2:vocabprefs";
 const HIDE_FIELDS = [
   { key: "word",   label: "어휘 가리기" },
   { key: "desc",   label: "쉬운 한국어 뜻 가리기" },
-  { key: "native", label: "내 나라 말 뜻 가리기" }
+  { key: "native", label: "내 나라 말 가리기" }
 ];
 function renderVocab(from) {
   if (examActive()) { E = examActive(); return renderExam(); }   // 시험 중에는 잠금
@@ -6931,11 +7115,12 @@ function renderVocab(from) {
   const rv = classify(dayNos());
   const kindOf = no => rv.status[no] ? rv.status[no].kind : null;
   const isNew = no => (R.s1.entries[no] || {}).self === "new";
+  const rank = no => kindOf(no) === "red" ? 0 : kindOf(no) === "yellow" ? 1 : 2;   // 모르는 어휘 먼저
   const FILTERS = [
-    { key: "all",    label: "전체",          test: () => true },
-    { key: "yellow", label: "🟡 복습 권장",  test: no => kindOf(no) === "yellow" },
+    { key: "all",    label: "전체 (틀린 것 먼저)", test: () => true },
+    { key: "wrong",  label: "틀린 어휘",     test: no => !!kindOf(no) },
     { key: "red",    label: "🔴 집중 복습",  test: no => kindOf(no) === "red" },
-    { key: "new",    label: "처음 본 단어",  test: isNew }
+    { key: "yellow", label: "🟡 복습 권장",  test: no => kindOf(no) === "yellow" }
   ];
   const keep = () => store.set(VOCAB_PREFS, { filter, hide });
 
@@ -6963,7 +7148,7 @@ function renderVocab(from) {
       onclick: () => { hide[f.key] = !hide[f.key]; [...revealed].forEach(k => k.endsWith(":" + f.key) && revealed.delete(k)); keep(); draw(); } }, f.label)));
 
     const f = FILTERS.find(x => x.key === filter) || FILTERS[0];
-    const nos = dayNos().filter(f.test);
+    const nos = dayNos().filter(f.test).sort((a, b) => rank(a) - rank(b) || a - b);
     countLine.textContent = Object.values(hide).some(Boolean)
       ? `${nos.length}개. 가린 칸을 누르면 보이고, 다시 누르면 가려져요.` : `${nos.length}개`;
     if (!nos.length) { list.append(h("li", { class: "vempty" }, "여기에 해당하는 어휘가 없어요.")); return; }
@@ -6975,9 +7160,9 @@ function renderVocab(from) {
         isNew(no) ? h("span", { class: "vtag new" }, "처음 본 단어") : null);
       list.append(h("li", {},
         h("div", { class: "vtop" }, h("span", { class: "vno" }, no), tags),
-        h("div", { class: "vrow" }, field(no, "word", w.word, "vword"), shown(no, "word") ? sayBtn("", w.word) : null),
+        h("div", { class: "vrow" }, field(no, "word", w.word, "vword"), w.emo && shown(no, "word") ? h("span", { class: "vemo", "aria-hidden": "true" }, w.emo) : null, shown(no, "word") ? sayBtn("", w.word) : null),
         h("div", { class: "vrow" }, field(no, "desc", w.desc, "vdesc"), shown(no, "desc") ? sayBtn("", w.desc) : null),
-        h("div", { class: "vrow" }, h("span", { class: "vlabel" }, "내가 쓴 뜻"), field(no, "native", e.native || "(없음)", "vnative"))));
+        (trOf(no) || e.native) ? h("div", { class: "vrow" }, h("span", { class: "vlabel" }, trOf(no) ? "내 나라 말" : "내가 쓴 뜻"), field(no, "native", trOf(no) || e.native, "vnative")) : null));
     });
   }
 
