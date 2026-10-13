@@ -8629,7 +8629,10 @@ function renderFinal() {
     R.rv ? [h("p", { class: "kind" }, "1부 복습 빨리 풀기"),
       h("div", { class: "stats" }, row("1차", `${R.rv.queue.length - rvWrong().length}/${R.rv.queue.length}`),
         row("다시 풀기", R.rv.rqueue.length ? `${R.rv.rqueue.length - rvStillWrong().length}/${R.rv.rqueue.length}` : "없음"))] : null,
-    h("p", { class: "kind" }, R.rv ? "① 새 어휘 학습" : "① 어휘 학습"),
+    h("p", { class: "kind" }, R.rv ? "① 새 어휘 — 단어 → 뜻" : "① 단어 → 뜻"),
+    t.s1 ? h("div", { class: "stats" },
+      row("1차 총점", `${t.s1ok}/${t.s1}`),
+      row("틀린 것 다시 풀기", t.s1r ? `${t.s1rok}/${t.s1r}` : "없음")) :
     h("div", { class: "stats" },
       row("학습", `${t.native}/${t.n} 완료`),
       row(`${SELF.know.icon} ${SELF.know.short}`, `${t.know}`),
