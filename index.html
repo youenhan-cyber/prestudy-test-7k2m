@@ -241,7 +241,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font:inherit;font-size:.92rem
    비워 두면 시트로 보내지 않고, 휴대폰 저장 + 결과 복사만 작동해요.
    ================================================================= */
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbzxBY69jTxPYHJR32iAoBHCIO2LRLFTD9vl-dhe9fuKA1-6SQLD7fWPKbE9J5eX_WTU4Q/exec";
-const APP_VERSION = "2026-10-14 R10";
+const APP_VERSION = "2026-10-14 R11";
 
 /* =================================================================
    ✏️ 과 데이터 — 새 과를 추가할 때는 LESSONS 에 하나를 더 넣으면 됩니다.
@@ -8225,6 +8225,9 @@ function renderQ(mode) {
   if (answered) showResult(answered.pick);
 }
 
+const s3Need = () => pickTargets().length;
+const s3Note = () => { const n = s3Need(); return n ? `틀렸던 어휘 ${n}개만 문장 속에서 한 번 더 써 봐요.` : "1·2단계를 모두 맞혀서 3단계는 건너뛰어요. 👏"; };
+const s3Label = () => s3Need() ? "3단계 시작" : "CYCLE 결과 보기";
 const s2WrongOf = cy => cy.s2.queue.filter(q => !(R.s2.first[q.no] && R.s2.first[q.no].ok)).map(q => q.no);
 const s2RetryWrongOf = cy => cy.s2.rqueue.filter(q => !(R.s2.retry[q.no] && R.s2.retry[q.no].ok)).map(q => q.no);
 
@@ -8245,7 +8248,8 @@ function renderS2Sum() {
          h("p", { class: "muted", style: "margin-top:18px" }, "틀린 어휘만 다시 풀어요. 보기가 바뀌어요."),
          h("button", { type: "button", class: "btn", onclick: startRetry }, `틀린 ${wrong.length}개 다시 풀기`)]
       : [h("p", { class: "muted" }, "모두 맞았어요!"),
-         h("button", { type: "button", class: "btn", onclick: startS3 }, "3단계 시작")]
+         h("p", { class: "muted", style: "margin-top:10px" }, s3Note()),
+         h("button", { type: "button", class: "btn", onclick: startS3 }, s3Label())]
   );
 }
 function renderS2RSum() {
@@ -8258,8 +8262,8 @@ function renderS2RSum() {
       h("div", {}, h("span", {}, "다시 풀기"), h("b", {}, `${q.length - still.length}/${q.length}`)),
       h("div", {}, h("span", {}, "아직 틀린 어휘"), h("b", {}, `${still.length}개`))),
     still.length ? h("div", { class: "words" }, still.map(wd).join(" · ")) : null,
-    h("p", { class: "muted", style: "margin-top:18px" }, "이제 어려웠던 어휘 5개를 문장 속에서 써 봐요."),
-    h("button", { type: "button", class: "btn", onclick: startS3 }, "3단계 시작")
+    h("p", { class: "muted", style: "margin-top:18px" }, s3Note()),
+    h("button", { type: "button", class: "btn", onclick: startS3 }, s3Label())
   );
 }
 
@@ -8268,11 +8272,14 @@ function renderS2RSum() {
    ================================================================= */
 function priority(no) {
   const e = R.s1.entries[no] || {}, f = R.s2.first[no], r = R.s2.retry[no];
+  const a = R.s1.first && R.s1.first[no], b = R.s1.retry && R.s1.retry[no];
   let p = 0;
-  if (r && !r.ok) p += 8;          // 다시 풀기에서도 틀림
+  if (r && !r.ok) p += 8;          // 2단계 다시 풀기에서도 틀림
   if (f && !f.ok) p += 4;          // 2단계 1차에서 틀림
-  if (e.self === "new") p += 2;    // 처음 보는 단어
-  if (e.self === "seen") p += 1;   // 본 적 있지만 잘 모름
+  if (b && !b.ok) p += 3;          // 1단계 다시 풀기에서도 틀림
+  if (a && !a.ok) p += 2;          // 1단계 1차에서 틀림
+  if (e.self === "new") p += 2;    // (예전 방식) 처음 보는 단어
+  if (e.self === "seen") p += 1;   // (예전 방식) 본 적 있지만 잘 모름
   return p;
 }
 const conflictWith = (a, b) => L.conflicts.some(c => c.includes(a) && c.includes(b));
@@ -8299,9 +8306,10 @@ function makeBanks(nos, sentIdx, exclude) {
   });
 }
 
-/* 3단계에 낼 어휘 고르기: 어려운 것부터, 단 서로 바꿔 넣어도 말이 되는 짝(conflicts)은 함께 고르지 않음 */
+/* 3단계에 낼 어휘 고르기 (R11): 1·2단계에서 한 번이라도 틀린 어휘만, 어려운 것부터 최대 5개.
+   1·2단계를 모두 바로 맞힌 어휘는 3단계를 건너뜀. 서로 바꿔 넣어도 말이 되는 짝(conflicts)은 함께 고르지 않음 */
 function pickTargets() {
-  const ranked = shuffle(cycleNos()).sort((a, b) => priority(b) - priority(a));
+  const ranked = shuffle(cycleNos()).filter(no => priority(no) > 0).sort((a, b) => priority(b) - priority(a));
   const picked = [];
   for (const no of ranked) {
     if (picked.length >= S3_COUNT) break;
@@ -8314,6 +8322,7 @@ function pickTargets() {
 function startS3() {
   const S = C().s3;
   S.targets = pickTargets();
+  if (!S.targets.length) { S.banks = []; S.fills = []; S.checked = []; S.bi = 0; S.skipped = true; save(); return finishCycle(); }
   S.banks = makeBanks(S.targets, 0);
   S.fills = S.banks.map(b => b.items.map(() => null));
   S.checked = S.banks.map(() => false);
@@ -8625,7 +8634,7 @@ function renderCycleDone() {
     h("div", { class: "stats" },
       h("div", {}, h("span", {}, "1단계"), h("b", {}, s.s1.qs ? `1차 ${s.s1.first}/${s.s1.qs}` + (s.s1.retryTotal ? `, 다시 ${s.s1.retry}/${s.s1.retryTotal}` : "") : `${s.s1.done}/${s.s1.total} 완료`)),
       h("div", {}, h("span", {}, "2단계"), h("b", {}, `1차 ${s.s2.first}/${s.s2.total}` + (s.s2.retryTotal ? `, 다시 ${s.s2.retry}/${s.s2.retryTotal}` : ""))),
-      h("div", {}, h("span", {}, "3단계"), h("b", {}, `1차 ${s.s3.first}/${s.s3.total}` + (s.s3.retryTotal ? `, 다시 ${s.s3.retry}/${s.s3.retryTotal}` : "")))),
+      h("div", {}, h("span", {}, "3단계"), h("b", {}, s.s3.total ? `1차 ${s.s3.first}/${s.s3.total}` + (s.s3.retryTotal ? `, 다시 ${s.s3.retry}/${s.s3.retryTotal}` : "") : "건너뜀 (모두 맞힘)"))),
     again.length ? [h("p", { class: "muted", style: "margin-top:16px" }, "다시 볼 단어"), h("div", { class: "words" }, again.join("  "))]
                  : h("p", { class: "allok" }, "이번 10개는 한 번도 틀리지 않았어요!"),
     h("div", { class: "total" },
@@ -8787,7 +8796,7 @@ function renderFinal() {
 
     h("p", { class: "kind" }, "③ 문맥 속 어휘"),
     h("div", { class: "stats" },
-      row("1차 총점", `${t.s3ok}/${t.s3}`),
+      row("1차 총점", t.s3 ? `${t.s3ok}/${t.s3}` : "모두 맞혀서 건너뜀"),
       row("오답 재학습", t.s3r ? `${t.s3rok}/${t.s3r}` : "없음"),
       row("최종 미해결", `${t.s3r - t.s3rok}개`)),
 
