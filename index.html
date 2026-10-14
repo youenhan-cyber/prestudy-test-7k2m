@@ -110,6 +110,14 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--ink)}
 /* 2단계 */
 .prompt{font-size:1.3rem;font-weight:600;line-height:1.55;margin:4px 0 20px}
 .opts{display:grid;gap:10px}
+.gblock{border:2px solid var(--line);border-radius:10px;background:var(--surface);padding:12px 14px;margin-top:14px}
+.gp{font-weight:700;margin:0}.gex{color:var(--muted);font-size:.92rem;margin:4px 0 8px}
+.gta{display:block;width:100%;font:inherit;font-size:1rem;padding:10px 12px;margin-top:8px;border:2px solid var(--line);border-radius:8px;resize:vertical;background:#fff}
+.gta.bad{border-color:#C9503F}.gta.warn{border-color:#E0A526}
+.gram{margin-top:12px}
+.gthumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:12px}
+.gthumb img{width:100%;border-radius:8px;border:2px solid var(--line)}
+.gthumb .hint{margin:4px 0 0}
 .opt.dopt{font-size:1.02rem;line-height:1.45;padding:13px 16px}
 .native{margin:8px 0 2px;font-size:1.08rem;color:var(--muted)}
 .emo{font-size:2.6rem;line-height:1;margin-left:auto}
@@ -233,7 +241,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font:inherit;font-size:.92rem
    비워 두면 시트로 보내지 않고, 휴대폰 저장 + 결과 복사만 작동해요.
    ================================================================= */
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbzxBY69jTxPYHJR32iAoBHCIO2LRLFTD9vl-dhe9fuKA1-6SQLD7fWPKbE9J5eX_WTU4Q/exec";
-const APP_VERSION = "2026-10-14 R9";
+const APP_VERSION = "2026-10-14 R10";
 
 /* =================================================================
    ✏️ 과 데이터 — 새 과를 추가할 때는 LESSONS 에 하나를 더 넣으면 됩니다.
@@ -7502,6 +7510,79 @@ const LANGS = [
   { key: "en", label: "English" }, { key: "vi", label: "Tiếng Việt" }, { key: "my", label: "မြန်မာ" },
   { key: "ja", label: "日本語" }, { key: "zh", label: "中文" }, { key: "es", label: "Español" }
 ];
+/* 문법 문장 숙제: 과마다 문법 4개(18과는 2개) × 문장 3개. need = 문장에 꼭 보여야 하는 모양(정규식, 없으면 확인 안 함) */
+const GRAMMAR = {
+  L7: [
+    { p: "A/V-더라도", ex: "운동을 하기가 귀찮더라도 하루에 삼십 분씩 꼭 하세요.", need: "더라도" },
+    { p: "A-다고 보다 / V-ㄴ/는다고 보다", ex: "월급이 많은 일보다는 보람을 느끼는 일이 더 좋은 직업이라고 봐요.", need: "[다라]고\\s?(보|봐|본|봤|볼)" },
+    { p: "V-(으)ㄴ 채(로)", ex: "밤에 혼자 자는 게 무서워서 불을 켜 놓은 채로 잤다.", need: "채" },
+    { p: "A-(으)ㄴ지 A-(으)ㄴ지 / V-는지 V-는지", ex: "지금 밖에 비가 오는지 안 오는지 확인해 보는 게 좋겠다.", need: "지.+지" }
+  ],
+  L8: [
+    { p: "V-아다(가)/어다(가)", ex: "시장에서 과일을 사다가 냉장고에 넣어 놓았어요.", need: "다가?\\s" },
+    { p: "A-다는 N / V-ㄴ/는다는 N", ex: "친구들에게 제주도가 아름답다는 이야기를 많이 들었어요.", need: "다는" },
+    { p: "N을/를 비롯해서[비롯한]", ex: "결혼식에 신랑 신부의 친구들을 비롯해서 많은 사람들이 참석했다.", need: "비롯" },
+    { p: "A/V-(으)며", ex: "우리 회사에서는 경험이 많으며 능력이 뛰어난 인재를 뽑고자 합니다.", need: "며" }
+  ],
+  L9: [
+    { p: "A/V-거든", ex: "혹시 무슨 일이 생기거든 꼭 연락을 주세요.", need: "거든" },
+    { p: "A/V-았더라면/었더라면", ex: "너의 도움이 없었더라면 공부를 계속 하기 어려웠을 거야.", need: "더라면" },
+    { p: "A/V-(으)ㅁ", ex: "오전 9시에 110호에서 회의가 있음.", need: null },
+    { p: "A-(으)ㄴ 듯하다 / V-는 듯하다", ex: "의사 선생님의 표정을 보니 수술 결과가 좋지 않은 듯합니다.", need: "듯" }
+  ],
+  L10: [
+    { p: "A/V-(으)ㄹ 리(가) 없다", ex: "지금이 여름인데 스키장이 문을 열었을 리가 없어요.", need: "리가?\\s?없" },
+    { p: "V-기(가) 무섭게", ex: "내가 문을 열기가 무섭게 우리 강아지가 나에게 달려왔어요.", need: "기가?\\s?무섭게" },
+    { p: "N 만에", ex: "8년 만에 고등학교 친구를 만났어요.", need: "만에" },
+    { p: "A/V-(으)나", ex: "이 가방은 디자인이 예쁘나 실용적이지는 않다.", need: "나[\\s,]" }
+  ],
+  L11: [
+    { p: "A/V-더라고(요)", ex: "요즘은 외국 사람들이 한국어를 많이 배우더라고요.", need: "더라고" },
+    { p: "N치고", ex: "말을 많이 하는 사람치고 실수하지 않는 사람을 본 적이 없어요.", need: "치고" },
+    { p: "A-다는 것은 N에서/N(으)로 알 수 있다 / V-ㄴ/는다는 것은 …", ex: "아이들이 이 만화를 아주 좋아한다는 것은 눈빛으로 알 수 있다.", need: "알\\s?수\\s?있" },
+    { p: "N에 의하면", ex: "아침 신문 기사에 의하면 그 사건의 범인이 잡혔다고 한다.", need: "에\\s?의하면" }
+  ],
+  L12: [
+    { p: "V-(으)려다(가)", ex: "우산을 들고 나오려다가 비가 안 와서 놓고 왔다.", need: "려다" },
+    { p: "A/V-(으)ㄹ지도 모르다", ex: "추운 곳에서 오랫동안 서 있으면 발이 얼지도 모른다.", need: "지도\\s?(모르|몰라|모른|몰랐)" },
+    { p: "A-(으)ㄴ가? / V-는가?", ex: "사람은 무엇을 위해서 사는가?", need: "가\\s?\\?" },
+    { p: "N마저", ex: "날씨가 너무 추워서 오늘은 강물마저 얼어 버렸다.", need: "마저" }
+  ],
+  L13: [
+    { p: "N(이)면 N, N(이)면 N", ex: "알리 씨는 공부면 공부, 운동이면 운동, 못하는 게 없어요.", need: "면.+면" },
+    { p: "V-는 김에", ex: "민수야, 방 청소하는 김에 책상 정리도 좀 해.", need: "김에" },
+    { p: "V-느니 차라리", ex: "막히는 시간에 택시를 타느니 차라리 걸어가는 게 낫겠다.", need: "느니" },
+    { p: "N과/와 달리", ex: "다른 지역과 달리 이 지역에서는 휴대폰이 잘 안 된다.", need: "달리" }
+  ],
+  L14: [
+    { p: "N에 따라(서)", ex: "서울은 지역에 따라서 집값에 차이가 있어요.", need: "에\\s?따라" },
+    { p: "A-(으)ㄴ 데다(가) / V-는 데다(가)", ex: "미영 씨는 성격이 쾌활한 데다가 친절해서 친구들이 다 좋아해요.", need: "데다" },
+    { p: "A-(으)ㄴ 셈이다 / V-는 셈이다", ex: "이번 수학여행은 우리 반에서 한 명 빼고 다 가니까 거의 다 가는 셈이다.", need: "셈이" },
+    { p: "N에 불과하다", ex: "인터넷에 돌아다니는 이야기는 소문에 불과하니까 믿지 않는 것이 좋다.", need: "불과" }
+  ],
+  L15: [
+    { p: "N만 못하다", ex: "기숙사에서 여러 명이 같이 생활하니까 혼자 살 때만 못해요.", need: "만\\s?못" },
+    { p: "V-(으)ㄹ 게 아니라", ex: "피곤하다고 잠만 잘 게 아니라 나가서 운동을 좀 하세요.", need: "게\\s?아니라" },
+    { p: "N(으)로서", ex: "동생이 옳지 않은 판단을 할 때는 언니로서 조언을 해 줄 필요가 있다.", need: "로서" },
+    { p: "A/V-(으)므로", ex: "이 영화는 무서운 장면이 많이 나오므로 노약자나 임신부는 보지 않는 것이 좋다.", need: "므로" }
+  ],
+  L16: [
+    { p: "A-다기보다는 / V-ㄴ/는다기보다는", ex: "책 읽기를 싫어한다기보다는 책 읽을 시간이 없어요.", need: "다기보다" },
+    { p: "설마 A/V-겠어요?", ex: "설마 그 사람이 거짓말을 하겠어요?", need: "설마" },
+    { p: "N(으)로부터", ex: "이 집은 부모님으로부터 물려받은 집이다.", need: "로부터" },
+    { p: "N에 의해(서)", ex: "실험 결과는 실험 방법에 의해 달라질 수 있다.", need: "에\\s?의해" }
+  ],
+  L17: [
+    { p: "A-다 싶다 / V-ㄴ/는다 싶다", ex: "옷이 마음에 들기는 하지만 좀 비싸다 싶어서 안 샀어요.", need: "다\\s?싶" },
+    { p: "V-곤 하다", ex: "시간이 있으면 근처 공원에 가서 산책을 하곤 해요.", need: "곤\\s?(하|해|했)" },
+    { p: "A/V-았었/었었-", ex: "옛날에는 아주 장난을 많이 쳤었는데 지금은 점잖아졌다.", need: "PAST2" },
+    { p: "V-는 사이(에)", ex: "내가 텔레비전을 보는 사이에 동생이 내 옷을 입고 나갔다.", need: "사이" }
+  ],
+  L18: [
+    { p: "V-아/어 대다", ex: "옆집 강아지가 시끄럽게 짖어 대서 공부를 할 수가 없다.", need: "[아어여해]\\s?대" },
+    { p: "N(이)며 N(이)며", ex: "눈이며 입이며 아버지 얼굴을 많이 닮았다.", need: "며.+며" }
+  ]
+};
 const LANG_KEY = "prestudy:v3:lang";
 const myLang = () => store.get(LANG_KEY) || "";
 /* ================================================================= */
@@ -7597,10 +7678,10 @@ const who = () => R.student.name ? `${R.student.name} (${R.student.id})` : R.stu
 const uuid = () => { try { return crypto.randomUUID(); } catch (e) { return "S" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); } };
 
 /* ---------- 구글 시트와 주고받기 ---------- */
-async function callSheet(method, params, body) {
+async function callSheet(method, params, body, wait = 20000) {
   if (!SHEET_URL) throw new Error("no_url");
   const ctrl = ("AbortController" in window) ? new AbortController() : null;
-  const timer = ctrl ? setTimeout(() => ctrl.abort(), 20000) : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), wait) : null;
   try {
     const url = method === "GET" ? SHEET_URL + "?" + new URLSearchParams(params).toString() : SHEET_URL;
     const res = await fetch(url, method === "GET" ? { signal: ctrl && ctrl.signal }
@@ -7649,7 +7730,13 @@ function seoulClock() {
     return { wd: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(p.weekday), min: Number(p.hour) * 60 + Number(p.minute) };
   } catch (e) { const d = new Date(Date.now() + (9 * 60 + new Date().getTimezoneOffset()) * 60000); return { wd: d.getDay(), min: d.getHours() * 60 + d.getMinutes() }; }
 }
-function classLocked() { const c = seoulClock(); return CLASS_LOCK.days.includes(c.wd) && c.min >= CLASS_LOCK.from && c.min < CLASS_LOCK.to; }
+/* 선생님 휴대폰: 주소 끝에 ?teacher=snu4 를 붙여 한 번 열면 그 휴대폰은 계속 수업 시간 잠금이 풀림.
+   다시 잠그려면 ?teacher=off 로 한 번 열기. (시험 시작 잠금은 서버라 그대로) */
+const UNLOCK_KEY = "prestudy:v3:unlock";
+try { const t = new URLSearchParams(location.search).get("teacher");
+  if (t === "snu4") localStorage.setItem(UNLOCK_KEY, "on"); else if (t === "off") localStorage.removeItem(UNLOCK_KEY); } catch (e) {}
+const unlockedToday = () => { try { return !!localStorage.getItem(UNLOCK_KEY); } catch (e) { return false; } };
+function classLocked() { if (unlockedToday()) return false; const c = seoulClock(); return CLASS_LOCK.days.includes(c.wd) && c.min >= CLASS_LOCK.from && c.min < CLASS_LOCK.to; }
 function renderLocked() {
   if (R) save();
   R = null; KEY = null;
@@ -7708,9 +7795,25 @@ function renderStart() {
   langSel.value = myLang();
   langSel.addEventListener("change", () => store.set(LANG_KEY, langSel.value));
   const days = h("div", { class: "days" });
+  const gram = h("div", { class: "gram" });
   const normName = () => normId(nameIn.value);
 
+  function drawGram() {
+    const lesson = LESSONS.find(l => l.code === sel.value), G = GRAMMAR[lesson.code]; gram.innerHTML = "";
+    if (lesson.review) return;
+    const id = normName(), rec = id ? store.get(gramKey(lesson.code, id)) : null;
+    if (!G) { gram.append(h("p", { class: "hint" }, "✍️ 이 과의 문법 숙제는 준비 중이에요.")); return; }
+    gram.append(h("div", { class: "dayrow" },
+      h("button", { type: "button", class: "day", onclick: () => {
+        const nid = normName();
+        if (!nid) { err.textContent = "학생 번호를 먼저 쓰세요."; nameIn.focus(); return; }
+        if (classLocked()) { err.textContent = "평일 오전 9시~오후 1시(수업 시간)에는 숙제를 할 수 없어요. 1시 이후에 하세요."; return; }
+        renderGrammar(lesson, nid); } },
+        h("span", {}, "✍️ 문법 숙제", h("small", {}, `문법 ${G.length}개 × 3문장 · 공책 사진`)),
+        h("span", { class: "st" + (rec && rec.sent ? " done" : "") }, rec && rec.sent ? "제출 ✓" : classLocked() ? "🔒 수업 중" : rec ? "이어서" : "시작"))));
+  }
   function drawDays() {
+    drawGram();
     const lesson = LESSONS.find(l => l.code === sel.value); days.innerHTML = "";
     lesson.days.forEach(d => {
       const name = normName(), rec = name ? store.get(recKey(lesson.code, d.day, name)) : null;
@@ -7798,7 +7901,7 @@ function renderStart() {
     h("label", { class: "f", for: "name" }, "학생 번호"), nameIn, whoLine, err,
     h("label", { class: "f", for: "lang", style: "margin-top:10px" }, "내 나라 말 (1단계에 같이 나와요)"), langSel,
     h("label", { class: "f", for: "lesson", style: "margin-top:10px" }, "과"), sel,
-    h("label", { class: "f" }, "공부할 DAY"), days,
+    h("label", { class: "f" }, "공부할 DAY"), days, gram,
     h("p", { class: "hint" }, "중간에 닫아도 같은 휴대폰, 같은 브라우저에서 이어서 할 수 있어요.")
   );
 }
@@ -9061,6 +9164,99 @@ function renderVocab(from) {
   draw();
 }
 
+/* =================================================================
+   ✍️ 문법 숙제 — 공책에 손으로 쓰고 사진을 올림 (과마다 1번)
+   서버가 사진 글자를 읽어서(OCR) 잘 찍혔는지·문법 모양·베낀 것 같은지 확인
+   ================================================================= */
+const gramKey = (code, id) => `prestudy:v3:gram:${code}:${id}`;
+const GRAM_MAX_PHOTOS = 3, GRAM_EDGE = 1600;
+function loadImage(file) {
+  return new Promise((ok, no) => { const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); ok(img); }; img.onerror = () => { URL.revokeObjectURL(url); no(new Error("img")); }; img.src = url; });
+}
+function photoQuality(img) {                              // 밝기·흐림 대충 보기 (작게 줄여서)
+  const w = 320, hgt = Math.max(1, Math.round(img.height * w / img.width)), c = document.createElement("canvas");
+  c.width = w; c.height = hgt; const x = c.getContext("2d"); x.drawImage(img, 0, 0, w, hgt);
+  const d = x.getImageData(0, 0, w, hgt).data, g = new Float32Array(w * hgt); let sum = 0;
+  for (let i = 0; i < w * hgt; i++) { g[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]; sum += g[i]; }
+  let m = 0, v = 0, n = 0;
+  for (let yy = 1; yy < hgt - 1; yy++) for (let xx = 1; xx < w - 1; xx++) { const i = yy * w + xx;
+    const L = 4 * g[i] - g[i - 1] - g[i + 1] - g[i - w] - g[i + w]; m += L; v += L * L; n++; }
+  m /= n; return { bright: sum / (w * hgt), sharp: v / n - m * m };
+}
+function shrink(img) {
+  const k = Math.min(1, GRAM_EDGE / Math.max(img.width, img.height)), c = document.createElement("canvas");
+  c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL("image/jpeg", 0.8);
+}
+async function sha(text) { try { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("").slice(0, 32); } catch (e) { return ""; } }
+
+function renderGrammar(lesson, id) {
+  if (examActive()) { E = examActive(); return renderExam(); }
+  if (classLocked()) return renderLocked();
+  R = null; KEY = null;
+  const G = GRAMMAR[lesson.code] || [];
+  const rec = store.get(gramKey(lesson.code, id)) || { sent: null };
+  const keep = () => store.set(gramKey(lesson.code, id), rec);
+  const info = knownStudent(id) || {};
+  const photos = [];                                      // { data, warn }
+  const thumbs = h("div", { class: "gthumbs" }), status = h("div", { role: "status" });
+  const pick = h("input", { type: "file", accept: "image/*", capture: "environment", hidden: true, multiple: true });
+  const add = h("button", { type: "button", class: "btn ghost", style: "margin-top:16px" }, "📷 공책 사진 찍기 / 고르기");
+  const send = h("button", { type: "button", class: "btn", style: "margin-top:12px", disabled: true }, rec.sent ? "다시 내기" : "사진 내기");
+  add.addEventListener("click", () => pick.click());
+  function draw() {
+    thumbs.innerHTML = "";
+    photos.forEach((p, i) => thumbs.append(h("div", { class: "gthumb" },
+      h("img", { src: p.data, alt: `사진 ${i + 1}` }),
+      p.warn ? h("p", { class: "hint" }, p.warn) : null,
+      h("button", { type: "button", class: "link", onclick: () => { photos.splice(i, 1); draw(); } }, "빼기"))));
+    send.disabled = !photos.length;
+    add.hidden = photos.length >= GRAM_MAX_PHOTOS;
+  }
+  pick.addEventListener("change", async () => {
+    for (const f of [...pick.files].slice(0, GRAM_MAX_PHOTOS - photos.length)) {
+      try { const img = await loadImage(f), q = photoQuality(img);
+        const warn = q.bright < 70 ? "조금 어두워요. 밝은 곳에서 다시 찍으면 좋아요." : q.sharp < 60 ? "조금 흐려요. 휴대폰을 움직이지 말고 다시 찍으면 좋아요." : "";
+        photos.push({ data: shrink(img), warn }); }
+      catch (e) { status.className = "err"; status.textContent = "사진을 열지 못했어요. 다른 사진으로 해 보세요."; }
+    }
+    pick.value = ""; draw();
+  });
+  send.addEventListener("click", async () => {
+    if (!SHEET_URL) { status.className = "err"; status.textContent = "학교에서 받은 링크에서만 낼 수 있어요."; return; }
+    send.disabled = true; add.disabled = true; send.textContent = "사진을 보내고 글씨를 읽는 중… (30초쯤)"; status.textContent = "";
+    try {
+      const data = photos.map(p => p.data.split(",")[1]);
+      const r = await callSheet("POST", null, { action: "grammar_photo", app_version: APP_VERSION, submission_id: uuid(), student_id: id,
+        lesson_code: lesson.code, lesson_title: lesson.title, photos: data, hashes: await Promise.all(data.map(sha)),
+        grammar: G.map(g => ({ p: g.p, ex: g.ex, need: g.need })) }, 90000);
+      if (!r.ok) throw new Error(r.error || "fail");
+      if (r.unreadable) {
+        status.className = "err"; status.textContent = "사진의 글씨가 잘 안 읽혀요. 밝은 곳에서 공책 전체가 나오게 다시 찍어 주세요.";
+      } else {
+        rec.sent = { at: Date.now(), received: r.received_at || "" }; keep();
+        status.className = "allok";
+        status.textContent = "✅ 문법 숙제를 냈어요." + (r.missing && r.missing.length ? ` 그런데 '${r.missing.join("', '")}' 문장이 잘 안 보여요. 빠졌으면 공책에 더 쓰고 다시 내세요.` : "");
+        photos.splice(0); draw();
+      }
+    } catch (e) {
+      status.className = "err"; status.textContent = "보내지 못했어요. 인터넷을 확인하고 다시 누르세요.";
+    }
+    send.textContent = rec.sent ? "다시 내기" : "사진 내기"; send.disabled = !photos.length; add.disabled = false;
+  });
+  screen(
+    h("button", { type: "button", class: "link", onclick: renderStart }, "← 처음 화면"),
+    h("h2", { style: "margin-top:8px" }, `✍️ ${lesson.title.split(" ")[0]} 문법 숙제`),
+    h("p", { class: "muted" }, `${info.name ? info.name + " · " : ""}${id}`),
+    h("p", { class: "muted small" }, `공책에 문법마다 내 문장을 3개씩 손으로 쓰세요 (모두 ${G.length * 3}문장). 예문을 그대로 쓰면 안 돼요. 다 쓰면 밝은 곳에서 공책 전체가 나오게 사진을 찍어 내세요. (숙제 1번)`),
+    rec.sent ? h("p", { class: "allok" }, "✅ 이미 냈어요. 고쳐서 다시 낼 수도 있어요.") : null,
+    G.map((g, gi) => h("div", { class: "gblock" }, h("p", { class: "gp" }, `${gi + 1}. ${g.p}`), h("p", { class: "gex" }, "예) " + g.ex))),
+    pick, add, thumbs, send, status
+  );
+}
 renderStart();
 </script>
 </body>
