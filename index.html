@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>4급 어휘 예습</title>
+<title>4급 어휘 복습</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;600&family=Noto+Sans+Myanmar&display=swap" rel="stylesheet">
@@ -241,7 +241,7 @@ pre.out{white-space:pre-wrap;word-break:break-word;font:inherit;font-size:.92rem
    비워 두면 시트로 보내지 않고, 휴대폰 저장 + 결과 복사만 작동해요.
    ================================================================= */
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbzxBY69jTxPYHJR32iAoBHCIO2LRLFTD9vl-dhe9fuKA1-6SQLD7fWPKbE9J5eX_WTU4Q/exec";
-const APP_VERSION = "2026-10-22 R14";
+const APP_VERSION = "2026-10-22 R15";
 
 /* =================================================================
    ✏️ 과 데이터 — 새 과를 추가할 때는 LESSONS 에 하나를 더 넣으면 됩니다.
@@ -7779,8 +7779,8 @@ function renderLocked() {
   screen(
     h("div", { class: "cells", "aria-hidden": "true" }, h("span", { class: "cell" }, "🔒")),
     h("h1", { style: "margin-top:20px" }, "지금은 수업 시간이에요"),
-    h("p", { class: "muted" }, "평일 오전 9시부터 오후 1시까지는 예습을 할 수 없어요. 1시 이후에 다시 들어오세요."),
-    h("p", { class: "hint" }, "지금까지 한 예습은 저장되어 있어요. 시험은 처음 화면의 📝 시험 버튼으로 볼 수 있어요."),
+    h("p", { class: "muted" }, "평일 오전 9시부터 오후 1시까지는 복습을 할 수 없어요. 1시 이후에 다시 들어오세요."),
+    h("p", { class: "hint" }, "지금까지 한 복습은 저장되어 있어요. 시험은 1시 이후에 처음 화면의 📝 시험 버튼으로 볼 수 있어요."),
     h("button", { type: "button", class: "btn", style: "margin-top:22px", onclick: renderStart }, "처음 화면으로"));
 }
 setInterval(() => { if (R && !examActive() && classLocked()) renderLocked(); }, 20000);   // 예습하다가 9시가 되면 잠금 화면으로
@@ -7870,11 +7870,11 @@ function renderStart() {
         h("div", { class: "dayhead" }, h("b", {}, lesson.review ? "복습" : `DAY ${d.day}`),
           h("small", {}, lesson.review ? `${reviewRange(lesson)} 복습 ${lines(lesson.review).length}개 + 새 어휘 ${d.to - d.from + 1}개` : `어휘 ${d.from}~${d.to}번`)),
         h("button", { type: "button", class: "day", onclick: () => go(lesson, d.day) },
-          h("span", {}, "📘 예습", h("small", {}, lesson.review ? `빨리 풀기 + 10개씩 ${cycles}번` : `10개씩 ${cycles}번`)),
+          h("span", {}, "📘 복습", h("small", {}, lesson.review ? `빨리 풀기 + 10개씩 ${cycles}번` : `10개씩 ${cycles}번`)),
           h("span", { class: "st" + (done ? " done" : "") }, classLocked() && !done ? "🔒 수업 중" : st)),
-        lesson.noExam ? h("p", { class: "hint", style: "margin:6px 2px 0" }, "복습은 시험이 없어요. 예습만 하면 돼요.") :
+        lesson.noExam ? h("p", { class: "hint", style: "margin:6px 2px 0" }, "복습 단원은 시험이 없어요. 복습만 하면 돼요.") :
         h("button", { type: "button", class: "day", onclick: () => openExam(lesson, d.day) },
-          h("span", {}, "📝 시험", h("small", {}, "수업 날 9시, 10분")),
+          h("span", {}, "📝 시험", h("small", {}, "수업 끝나고, 10분")),
           h("span", { class: "st" + (edone ? " done" : "") }, est)),
         rec ? h("div", { class: "dayacts" },
           rec.completed ? h("button", { type: "button", class: "link strong", onclick: () => go(lesson, d.day, "vocab") }, "📒 나의 어휘장") : null,
@@ -7892,7 +7892,7 @@ function renderStart() {
   async function go(lesson, day, open) {
     const id = normName();
     if (!id) { err.textContent = "학생 번호를 먼저 쓰세요."; nameIn.focus(); return; }
-    if (classLocked()) { err.textContent = "평일 오전 9시~오후 1시(수업 시간)에는 예습을 할 수 없어요. 1시 이후에 하세요."; return; }
+    if (classLocked()) { err.textContent = "평일 오전 9시~오후 1시(수업 시간)에는 복습을 할 수 없어요. 1시 이후에 하세요."; return; }
     if (busy) return;
     let info = knownStudent(id);
     if (SHEET_URL && !info) {                       // 처음 쓰는 번호는 명단에서 확인
@@ -7931,8 +7931,8 @@ function renderStart() {
   drawDays(); showWho(); resendPendingExams();
 
   screen(
-    h("div", { class: "cells", "aria-hidden": "true" }, h("span", { class: "cell" }, "예"), h("span", { class: "cell" }, "습")),
-    h("h1", { style: "margin-top:20px" }, "어휘 예습"),
+    h("div", { class: "cells", "aria-hidden": "true" }, h("span", { class: "cell" }, "복"), h("span", { class: "cell" }, "습")),
+    h("h1", { style: "margin-top:20px" }, "어휘 복습"),
     h("p", { class: "muted" }, "10개씩 뜻을 찾고, 확인하고, 문장에 써 봐요. 이것을 5번 하면 끝나요."),
     h("label", { class: "f", for: "name" }, "학생 번호"), nameIn, whoLine, err,
     h("label", { class: "f", for: "lang", style: "margin-top:10px" }, "내 나라 말 (1단계에 같이 나와요)"), langSel,
@@ -8678,7 +8678,7 @@ function resultText() {
     `🔴 집중 복습 ${rv.red.length}개`
   ];
   if (rv.red.length) out.push(`🔴 ${rv.red.map(wd).join(" · ")}`);
-  out.push("", `학습시간 ${minutes()}분`, "", "예습 완료 ✓");
+  out.push("", `학습시간 ${minutes()}분`, "", "복습 완료 ✓");
   return out.join("\n");
 }
 async function copyText(t) {
@@ -8749,14 +8749,14 @@ function syncBox() {
     const st = R.sync.status;
     if (st === "ok") {
       box.className = "sync ok";
-      box.append(h("b", {}, "✅ 예습 결과가 제출되었습니다."), R.sync.receivedAt ? h("span", {}, `받은 시각 ${R.sync.receivedAt}`) : null);
+      box.append(h("b", {}, "✅ 복습 결과가 제출되었습니다."), R.sync.receivedAt ? h("span", {}, `받은 시각 ${R.sync.receivedAt}`) : null);
     } else if (st === "sending" || st === "pending") {
       box.className = "sync wait";
       box.append(h("b", {}, "⏳ 결과를 선생님께 보내고 있어요…"));
     } else {
       box.className = "sync fail";
       box.append(h("b", {}, "⚠️ 결과를 보내지 못했어요."),
-        h("span", {}, "예습 기록은 이 휴대폰에 그대로 있어요. 인터넷 연결을 확인하고 다시 제출하세요."),
+        h("span", {}, "복습 기록은 이 휴대폰에 그대로 있어요. 인터넷 연결을 확인하고 다시 제출하세요."),
         h("button", { type: "button", class: "btn", style: "margin-top:10px", onclick: () => submitPrestudy(draw) }, "다시 제출"));
     }
   };
@@ -8864,12 +8864,12 @@ function renderExamEntry(target) {
       if (!r.ok) {
         btn.disabled = false; btn.textContent = "시험 시작";
         err.textContent = ({
-          bad_code: "시험 코드가 맞지 않아요. 칠판의 코드를 다시 확인하세요.",
+          bad_code: "시험 코드가 맞지 않아요. 선생님이 알려 준 코드를 다시 확인하세요.",
           not_found: "명단에 없는 번호예요. 선생님께 확인하세요.",
-          wrong_class: "우리 반 시험 코드가 아니에요. 칠판의 코드를 다시 확인하세요.",
+          wrong_class: "우리 반 시험 코드가 아니에요. 선생님이 알려 준 코드를 다시 확인하세요.",
           wrong_day: `이 코드는 ${(r.lesson_title || "").split(" ")[0]} DAY ${r.day} 시험 코드예요. 오늘 시험 DAY를 다시 확인하세요.`,
           no_items: "이 시험의 문제가 아직 준비되지 않았어요. 선생님께 알려 주세요.",
-          class_time: "지금은 수업 시간이라 시험을 시작할 수 없어요. 오후 1시 이후에 다시 오세요. (1시 이후 시험은 0.5점)",
+          class_time: "지금은 수업 시간이라 시험을 시작할 수 없어요. 오후 1시 이후에 다시 오세요. (수업 날 안에 보면 1점)",
           already_taken: `이미 본 시험이에요. (1차 ${r.score}/${r.total}) 다시 보려면 선생님께 말씀하세요.`
         })[r.error] || "시험을 시작하지 못했어요. 다시 눌러 보세요.";
         return;
@@ -8886,7 +8886,7 @@ function renderExamEntry(target) {
   screen(
     h("button", { type: "button", class: "link", onclick: renderStart }, "← 처음 화면"),
     h("h2", { style: "margin-top:8px" }, `📝 ${lesson.title.split(" ")[0]} DAY ${day} 시험`),
-    h("p", { class: "muted" }, "선생님이 알려 준 시험 코드를 넣으면 시작해요. 시간은 10분이에요."),
+    h("p", { class: "muted" }, "수업 끝날 때 선생님이 알려 준 시험 코드를 넣으면 시작해요. 시간은 10분이에요. 수업 날 안에 보면 1점이에요."),
     h("label", { class: "f", for: "ex-id" }, "학생 번호"), idIn, who,
     h("label", { class: "f", for: "ex-code" }, "시험 코드"), codeIn,
     err, btn,
@@ -9093,7 +9093,7 @@ function renderExamDone() {
     `1차 ${f.score}/${f.total}`,
     E.wrong.length ? `오답 재시험 ${tried ? rOk : 0}/${E.wrong.length}` : "오답 없음",
     unresolved.length ? `미해결: ${unresolved.map(no => E.items.find(x => x.no === no).word).join(" · ")}` : "",
-    E.regular ? "" : "정규시간 외 응시",
+    E.regular ? "" : "수업 날 지나서 응시 (0.5점)",
     E.autoEnd ? "10분 종료로 자동 제출" : "",
     `시험 ID: ${E.id.slice(0, 8)}`
   ].filter(Boolean).join("\n");
@@ -9106,7 +9106,7 @@ function renderExamDone() {
       row("1차 점수", `${f.score}/${f.total}`),
       row("오답 재시험", E.wrong.length ? `${tried ? rOk : 0}/${E.wrong.length}` : "없음"),
       row("최종 미해결", `${unresolved.length}개`),
-      row("응시", E.regular ? "정규시간" : "정규시간 외")),
+      row("응시", E.regular ? "수업 날 (1점)" : "수업 날 지남 (0.5점)")),
     E.autoEnd ? h("p", { class: "muted small", style: "margin-top:8px" }, "10분이 끝나서 자동으로 제출됐어요.") : null,
     firstWrongItems.length ? [h("p", { class: "kind" }, "1차에서 틀린 어휘"),
       h("ul", { class: "journey" }, firstWrongItems.map(it => h("li", {},
